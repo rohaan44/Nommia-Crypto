@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
       child: Sizer(
          builder: (context, orientation, screenType) {
           return MaterialApp(
-            title: 'Flutter Demo',
+            title: 'Nommia Crypto',
             theme: AppTheme.darkTheme,
             // home:const HomeScreen(),
             initialRoute: RoutePaths.splashScreen,
