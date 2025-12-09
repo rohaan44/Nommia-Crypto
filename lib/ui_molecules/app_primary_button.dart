@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:nommia_crypto/helpers/app_layout.dart';
 import 'package:nommia_crypto/utils/color_utils.dart';
 import 'package:nommia_crypto/utils/font_size.dart';
+import 'package:nommia_crypto/utils/theme/app_gradient.dart';
 
 class AppButton extends StatelessWidget {
   const AppButton({
@@ -21,10 +22,10 @@ class AppButton extends StatelessWidget {
     this.textDecoration,
     this.color,
     this.buttonColor,
-    this.isBorder = false,
+    this.isBorder = true,
     this.borderColor,
     this.borderWidth = 0.5,
-    this.isButtonEnable = true,
+    this.isButtonEnable = false,
     this.borderRadius,
     this.fromAuthScreen,
     this.textHeight,
@@ -34,6 +35,7 @@ class AppButton extends StatelessWidget {
     this.showIcon = false,
     this.icon,
     this.iconSpacing = 8.0,
+    this.gradient,
   });
 
   final String? text;
@@ -62,13 +64,18 @@ class AppButton extends StatelessWidget {
   final Widget? svg;
   final bool? fromAuthScreen;
 
-  // 🔹 New properties for icon support
+  // 🔹 Icon support
   final bool showIcon;
   final Widget? icon;
   final double iconSpacing;
 
+  // 🔹 New: Gradient Support
+  final Gradient? gradient;
+
   @override
   Widget build(BuildContext context) {
+    final bool applyGradient = isButtonEnable && gradient != null;
+
     return InkWell(
       onTap: isLoading || !isButtonEnable
           ? null
@@ -81,34 +88,40 @@ class AppButton extends StatelessWidget {
         padding: padding ?? EdgeInsets.zero,
         width: width ?? double.infinity,
         height: height ?? ch(51),
-        decoration: buttonStyle ??
+
+        decoration:
+            buttonStyle ??
             BoxDecoration(
-              // boxShadow: boxShadow ??
-              //     [
-              //       BoxShadow(
-              //         color: AppColor.c000000.withOpacity(0.10),
-              //         blurRadius: 4,
-              //         offset: const Offset(0, 2),
-              //       ),
-              //     ],
               borderRadius: BorderRadius.circular(borderRadius ?? cw(50)),
-              color: isButtonEnable
-                  ? (buttonColor ?? AppColor.white)
-                  : AppColor.gold,
-              border: isBorder
+
+              // ➤ APPLY GRADIENT ONLY IF BUTTON IS ENABLED
+              gradient: isButtonEnable == true
+                  ? AppGradients.goldenBtn
+                  : applyGradient
+                  ? gradient
+                  : null,
+
+              // ➤ IF GRADIENT ENABLED → no solid color
+              // ➤ IF GRADIENT DISABLED → use buttonColor
+              color: applyGradient ? null : (buttonColor ?? AppColor.fieldBg),
+
+              border: applyGradient
+                  ? null
+                  : isBorder
                   ? Border.all(
-                      color: borderColor ?? AppColor.border,
+                      color: (borderColor ?? AppColor.cFFFFFF),
                       width: borderWidth,
                     )
                   : null,
             ),
-        child: child ??
+
+        child:
+            child ??
             (!isLoading
                 ? Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      // 🔹 Optional icon (centered with text)
                       if (showIcon && icon != null) ...[
                         icon!,
                         if (text != null) SizedBox(width: iconSpacing),
@@ -117,14 +130,15 @@ class AppButton extends StatelessWidget {
                       if (text != null)
                         Text(
                           text!,
-                          style: textStyle ??
+                          style:
+                              textStyle ??
                               TextStyle(
                                 fontFamily: "Inter",
-                                fontSize: fontSize ?? AppFontSize.f16-2,
+                                fontSize: fontSize ?? AppFontSize.f15 - 2,
                                 color: isButtonEnable
-                                    ? textColor ?? AppColor.background
-                                    : AppColor.white.withOpacity(0.5),
-                                fontWeight: fontWeight ?? FontWeight.w600,
+                                    ? (textColor ?? AppColor.background)
+                                    : AppColor.cFFFFFF,
+                                fontWeight: fontWeight ?? FontWeight.w500,
                                 decoration:
                                     textDecoration ?? TextDecoration.none,
                                 letterSpacing: 0,
@@ -132,10 +146,7 @@ class AppButton extends StatelessWidget {
                               ),
                         ),
 
-                      if (isRow && svg != null) ...[
-                        const Spacer(),
-                        svg!,
-                      ],
+                      if (isRow && svg != null) ...[const Spacer(), svg!],
                     ],
                   )
                 : const CircularProgressIndicator(color: AppColor.white)),

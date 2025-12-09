@@ -15,8 +15,8 @@ class AppTheme {
 
     colorScheme: const ColorScheme.dark(
       background: AppColor.background,
-      primary: AppColor.gold,        // gold/yellow accent
-      secondary: AppColor.darkGrey,  // card surfaces
+      primary: AppColor.gold, // gold/yellow accent
+      secondary: AppColor.darkGrey, // card surfaces
       error: AppColor.red,
     ),
 
@@ -42,18 +42,9 @@ class AppTheme {
         fontWeight: FontWeight.w500,
         color: AppColor.white,
       ),
-      bodyLarge: TextStyle(
-        fontSize: 12.sp,
-        color: AppColor.lightGrey,
-      ),
-      bodyMedium: TextStyle(
-        fontSize: 11.sp,
-        color: AppColor.lightGrey,
-      ),
-      bodySmall: TextStyle(
-        fontSize: 10.sp,
-        color: AppColor.lightGrey,
-      ),
+      bodyLarge: TextStyle(fontSize: 12.sp, color: AppColor.lightGrey),
+      bodyMedium: TextStyle(fontSize: 11.sp, color: AppColor.lightGrey),
+      bodySmall: TextStyle(fontSize: 10.sp, color: AppColor.lightGrey),
       labelLarge: TextStyle(
         fontSize: 11.sp,
         fontWeight: FontWeight.w600,
@@ -80,9 +71,7 @@ class AppTheme {
         foregroundColor: AppColor.black,
         elevation: 0,
         padding: EdgeInsets.symmetric(vertical: 1.4.h),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(14),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
         textStyle: TextStyle(
           fontFamily: 'Inter',
           fontSize: 11.sp,
@@ -94,10 +83,7 @@ class AppTheme {
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: AppColor.darkGrey,
-      hintStyle: TextStyle(
-        color: AppColor.lightGrey,
-        fontSize: 11.sp,
-      ),
+      hintStyle: TextStyle(color: AppColor.lightGrey, fontSize: 11.sp),
       contentPadding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.6.h),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
@@ -109,10 +95,7 @@ class AppTheme {
       backgroundColor: AppColor.darkGrey,
       selectedColor: AppColor.gold,
       disabledColor: AppColor.darkGrey,
-      labelStyle: TextStyle(
-        fontSize: 10.sp,
-        color: AppColor.white,
-      ),
+      labelStyle: TextStyle(fontSize: 10.sp, color: AppColor.white),
       padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 0.8.h),
       showCheckmark: false,
       side: BorderSide.none,

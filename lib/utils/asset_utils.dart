@@ -1,10 +1,17 @@
 class AssetUtils {
   AssetUtils._();
-  
+
   static const String svg = "assets/svg/";
   static const String png = "assets/images/";
   static const String jpg = "assets/images/";
-  
-  
-  
-  }
+
+  static const String notifications = "${svg}notifications.svg";
+  static const String clockIcon = "${svg}clock_icon.svg";
+  static const String coinsIcon = "${svg}coins_icon.svg";
+  static const String infoIcon = "${svg}info.svg";
+  static const String arrowTransfer = "${svg}arrow_transfer.svg";
+  static const String arrowDeposit = "${svg}arrow_deposite.svg";
+  static const String arrowWithdra = "${svg}arrow_withdraw.svg";
+  static const String rocketIcon = "${svg}rocket_icon.svg";
+  static const String nomaniaLogo = "${svg}nomania_logo.svg";
+}
