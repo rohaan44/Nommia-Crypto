@@ -113,7 +113,9 @@ Widget _buildBody({
       SizedBox(height: ch(38)),
 
       AppButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.pushNamed(context, RoutePaths.dashboardScreem);
+        },
         height: ch(44),
         isButtonEnable: isNext,
         text: "Sign in",
