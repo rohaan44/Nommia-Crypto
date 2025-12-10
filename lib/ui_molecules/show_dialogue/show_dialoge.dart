@@ -24,14 +24,13 @@ void showDepositDialog(
         child: SizedBox(
           width: cw(100.w),
           child: Padding(
-            padding: EdgeInsetsGeometry.symmetric(vertical: ch(37)),
+            padding: EdgeInsets.symmetric(vertical: ch(37)),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 // 🚀 Icon
                 SvgPicture.asset(
                   AssetUtils.rocketIcon,
-
                   height: ch(40),
                   fit: BoxFit.contain,
                 ),
@@ -58,7 +57,6 @@ void showDepositDialog(
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: AppFontSize.f14,
-
                     height: 1.4,
                     color: AppColor.c787B7F,
                   ),

@@ -42,7 +42,7 @@ class AccountScreenController with ChangeNotifier {
     notifyListeners();
   }
 
-  bool _isCrypto = true;
+  bool? _isCrypto = true;
 
   bool? get isCrypto => _isCrypto;
   set isCrypto(bool value) {
