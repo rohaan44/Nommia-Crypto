@@ -3,10 +3,13 @@ import 'package:flutter/material.dart';
 class SignUpController extends ChangeNotifier {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final TextEditingController reEnterPasswordController =
+      TextEditingController();
 
-  SignInController() {
+  SignUpController() {
     emailController.addListener(_onFieldChanged);
     passwordController.addListener(_onFieldChanged);
+    reEnterPasswordController.addListener(_onFieldChanged);
   }
 
   bool _isPassHide = true;
@@ -43,6 +46,7 @@ class SignUpController extends ChangeNotifier {
   void dispose() {
     emailController.dispose();
     passwordController.dispose();
+    reEnterPasswordController.dispose();
     super.dispose();
   }
 }

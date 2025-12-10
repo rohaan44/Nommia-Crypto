@@ -161,6 +161,7 @@ Widget _buildBottomBody({
   required AccountScreenController model,
 }) {
   return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -171,16 +172,26 @@ Widget _buildBottomBody({
           return primaryButton(
             context: context,
             // icon: SvgPicture.asset(img ?? ""),
-            icon: Icon(
+            icon: SvgPicture.asset(
               index == 0
-                  ? Icons.arrow_upward
+                  ? AssetUtils.arrowDeposit
                   : index == 1
-                  ? Icons.arrow_downward
-                  : Icons.compare_arrows,
+                  ? AssetUtils.arrowWithdra
+                  : AssetUtils.arrowTransfer,
               color: model.selectIndex == index
                   ? AppColor.c000000
                   : AppColor.white,
             ),
+            // icon: Icon(
+            //   index == 0
+            //       ? Icons.arrow_upward
+            //       : index == 1
+            //       ? Icons.arrow_downward
+            //       : Icons.compare_arrows,
+            //   color: model.selectIndex == index
+            //       ? AppColor.c000000
+            //       : AppColor.white,
+            // ),
             title: titles ?? "",
             titleColor: model.selectIndex == index
                 ? AppColor.c000000
@@ -191,8 +202,8 @@ Widget _buildBottomBody({
 
               model.selectedLabel = titles;
 
-              print("$titles tapped");
-              print("${model.selectedLabel} asas");
+              // print("$titles tapped");
+              // print("${model.selectedLabel} asas");
             },
           );
         }),
@@ -210,6 +221,7 @@ Widget _buildBottomBody({
           height: ch(42),
           buttonColor: AppColor.c0C1010,
           padding: EdgeInsets.zero,
+          isButtonEnable: false,
           borderColor: AppColor.transparent,
 
           onPressed: () {},
@@ -364,7 +376,7 @@ Widget _buildBottomBody({
           padding: EdgeInsets.symmetric(horizontal: cw(24)),
           child: Row(
             children: [
-              Icon(Icons.abc, size: 40),
+              SvgPicture.asset(AssetUtils.cardIcon),
               SizedBox(width: cw(15)),
 
               AppText(
@@ -389,7 +401,7 @@ Widget _buildBottomBody({
           padding: EdgeInsets.symmetric(horizontal: cw(24)),
           child: Row(
             children: [
-              Icon(Icons.abc, size: 40),
+              SvgPicture.asset(AssetUtils.cardIcon),
               SizedBox(width: cw(15)),
 
               AppText(

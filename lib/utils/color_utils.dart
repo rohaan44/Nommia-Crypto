@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class AppColor {
   // Core Backgrounds
-  static const Color background = Color(0xFF000000); // full app background
+  static const Color background = c121717; // full app background
   static const Color cardDark = Color(0xFF1A1C20); // containers, cards
   static const Color darkGrey = Color(0xFF23252A); // input fields, chips
 
@@ -193,4 +193,5 @@ class AppColor {
   static const cF4C553 = Color(0xffF4C553);
   static const c838585 = Color(0xff838585);
   static const c454F5C = Color(0xff454F5C);
+  static const c1F242A = Color(0xff1F242A);
 }

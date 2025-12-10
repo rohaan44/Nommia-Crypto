@@ -77,7 +77,12 @@ Widget createAccountBottomesheet({
                 textAlign: TextAlign.center,
               ),
               SizedBox(height: ch(10)),
-              primaryTextField(hintText: hint1, border: InputBorder.none),
+              primaryTextField(
+                hintText: hint1,
+                border: InputBorder.none,
+
+                fillColor: AppColor.c0C1010,
+              ),
               SizedBox(height: ch(18)),
               AppText(
                 txt: title2,
@@ -88,7 +93,12 @@ Widget createAccountBottomesheet({
                 textAlign: TextAlign.center,
               ),
               SizedBox(height: ch(10)),
-              primaryTextField(hintText: hint2, border: InputBorder.none),
+              primaryTextField(
+                hintText: hint2,
+                border: InputBorder.none,
+
+                fillColor: AppColor.c0C1010,
+              ),
               SizedBox(height: ch(18)),
               if (title3.toString().isNotEmpty) ...[
                 AppText(
@@ -103,6 +113,7 @@ Widget createAccountBottomesheet({
                 primaryTextField(
                   hintText: hint3 ?? "",
                   border: InputBorder.none,
+                  fillColor: AppColor.c0C1010,
                 ),
               ],
             ],
@@ -116,11 +127,14 @@ Widget createAccountBottomesheet({
             children: [
               if (primarybtnHandler != null)
                 Expanded(
-                  child: AppButton(
-                    height: ch(48),
-                    isButtonEnable: false,
-                    onPressed: primarybtnHandler,
-                    text: primarybtnText ?? "Cancel",
+                  child: InkWell(
+                    onTap: primarybtnHandler,
+                    child: AppButton(
+                      height: ch(48),
+                      isButtonEnable: false,
+                      onPressed: primarybtnHandler,
+                      text: primarybtnText ?? "Cancel",
+                    ),
                   ),
                 ),
 

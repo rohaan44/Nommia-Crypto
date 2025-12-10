@@ -4,6 +4,7 @@ import 'package:nommia_crypto/helpers/app_layout.dart';
 import 'package:nommia_crypto/routes/route_paths.dart';
 import 'package:nommia_crypto/ui_molecules/app_background_conatiner/app_background_conatiner.dart';
 import 'package:nommia_crypto/ui_molecules/app_body/app_body.dart';
+import 'package:nommia_crypto/ui_molecules/app_dismis_keyboard.dart';
 import 'package:nommia_crypto/ui_molecules/app_primary_button.dart';
 import 'package:nommia_crypto/ui_molecules/app_text.dart';
 import 'package:nommia_crypto/ui_molecules/primary_textfield.dart';
@@ -19,13 +20,14 @@ class SignIn extends StatelessWidget {
     return Consumer<SignInController>(
       builder: (context, model, child) {
         return Scaffold(
-          body: appBackgroundContainer(
-            isScroll: true,
-            children: [
-              _buildAppbar(context: context),
-
-              _buildBody(context: context, model: model),
-            ],
+          body: AppDismissKeyboard(
+            child: appBackgroundContainer(
+              isScroll: true,
+              children: [
+                // _buildAppbar(context: context),
+                _buildBody(context: context, model: model),
+              ],
+            ),
           ),
         );
       },
@@ -33,15 +35,17 @@ class SignIn extends StatelessWidget {
   }
 }
 
-Widget _buildAppbar({required BuildContext context}) {
-  return SizedBox(
-    height: ch(116),
-    child: Padding(
-      padding: EdgeInsets.symmetric(horizontal: cw(24)),
-      child: Row(children: [Icon(Icons.arrow_back, color: AppColor.white)]),
-    ),
-  );
-}
+// Widget _buildAppbar({required BuildContext context}) {
+//   return SizedBox(
+//     height: ch(116),
+//     child: widget(
+//       child: Padding(
+//         padding: EdgeInsets.symmetric(horizontal: cw(24)),
+//         child: Row(children: [Icon(Icons.arrow_back, color: AppColor.white)]),
+//       ),
+//     ),
+//   );
+// }
 
 Widget _buildBody({
   required BuildContext context,
@@ -52,6 +56,7 @@ Widget _buildBody({
       model.passwordController.text.isNotEmpty;
   return appBody(
     body: [
+      SizedBox(height: 116),
       AppText(
         txt: "Sign in to Nommia",
         fontSize: AppFontSize.f20,
@@ -113,11 +118,16 @@ Widget _buildBody({
       SizedBox(height: ch(38)),
 
       AppButton(
+        isButtonEnable: isNext,
         onPressed: () {
-          Navigator.pushNamed(context, RoutePaths.dashboardScreem);
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            RoutePaths.dashboardScreem,
+            (route) => false,
+          );
         },
         height: ch(44),
-        isButtonEnable: isNext,
+        // isButtonEnable: isNext,
         text: "Sign in",
       ),
       SizedBox(height: ch(74)),
