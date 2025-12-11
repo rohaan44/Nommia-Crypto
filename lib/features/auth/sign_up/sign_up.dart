@@ -38,7 +38,10 @@ Widget _buildAppbar({required BuildContext context}) {
     height: ch(116),
     child: Padding(
       padding: EdgeInsets.symmetric(horizontal: cw(24)),
-      child: Row(children: [Icon(Icons.arrow_back, color: AppColor.white)]),
+      child: Row(
+        children: [
+          //Icon(Icons.arrow_back, color: AppColor.white)
+          ]),
     ),
   );
 }
@@ -47,9 +50,9 @@ Widget _buildBody({
   required BuildContext context,
   required SignUpController model,
 }) {
-  final isNext =
-      model.emailController.text.isNotEmpty &&
-      model.passwordController.text.isNotEmpty;
+  // final isNext =
+  //     model.emailController.text.isNotEmpty &&
+  //     model.passwordController.text.isNotEmpty;
   return appBody(
     body: [
       AppText(
@@ -125,9 +128,11 @@ Widget _buildBody({
       SizedBox(height: ch(38)),
 
       AppButton(
-        onPressed: () {},
+        onPressed: () {
+          
+        },
         height: ch(44),
-        isButtonEnable: isNext,
+      //  isButtonEnable: isNext,
         text: "Sign Up",
       ),
       SizedBox(height: ch(74)),

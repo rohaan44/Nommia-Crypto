@@ -38,7 +38,11 @@ Widget _buildAppbar({required BuildContext context}) {
     height: ch(116),
     child: Padding(
       padding: EdgeInsets.symmetric(horizontal: cw(24)),
-      child: Row(children: [Icon(Icons.arrow_back, color: AppColor.white)]),
+      child: Row(children: [ GestureDetector(
+          onTap: (){
+            Navigator.pop(context);
+          },
+          child: Icon(Icons.arrow_back, color: AppColor.white))]),
     ),
   );
 }

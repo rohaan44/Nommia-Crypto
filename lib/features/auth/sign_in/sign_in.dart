@@ -38,7 +38,15 @@ Widget _buildAppbar({required BuildContext context}) {
     height: ch(116),
     child: Padding(
       padding: EdgeInsets.symmetric(horizontal: cw(24)),
-      child: Row(children: [Icon(Icons.arrow_back, color: AppColor.white)]),
+      child: Row(
+        children: [
+        // GestureDetector(
+        //   onTap: (){
+        //     nav
+        //   },
+        //   child: Icon(Icons.arrow_back, color: AppColor.white))
+          
+          ]),
     ),
   );
 }
@@ -47,9 +55,6 @@ Widget _buildBody({
   required BuildContext context,
   required SignInController model,
 }) {
-  final isNext =
-      model.emailController.text.isNotEmpty &&
-      model.passwordController.text.isNotEmpty;
   return appBody(
     body: [
       AppText(
@@ -114,10 +119,11 @@ Widget _buildBody({
 
       AppButton(
         onPressed: () {
-          Navigator.pushNamed(context, RoutePaths.dashboardScreem);
+         
+           Navigator.pushNamed(context, RoutePaths.dashboardScreem);
         },
         height: ch(44),
-        isButtonEnable: isNext,
+        // isButtonEnable: isNext,
         text: "Sign in",
       ),
       SizedBox(height: ch(74)),
