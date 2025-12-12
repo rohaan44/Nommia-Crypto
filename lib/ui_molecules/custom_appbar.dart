@@ -14,21 +14,17 @@ Widget customAppBar({
   return Container(
     decoration: BoxDecoration(gradient: AppGradients.bgGradient),
     padding: EdgeInsets.fromLTRB(cw(23), ch(50), cw(15), ch(23)),
+    margin: EdgeInsets.zero,
     child: Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Expanded(
           child: Center(
             child: primaryTextField(
-              fillColor: AppColor.fieldBg,
               prefixIcon: Icon(Icons.search, color: AppColor.cFFFFFF, size: 18),
               textStyle: TextStyle(fontSize: 13),
               hintText: "Search pairs ...",
-              hintStyle: TextStyle(
-                fontSize: 13,
-                color: AppColor.cFFFFFF,
-                fontWeight: FontWeight.w500,
-              ),
+              hintStyle: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
               borderRadius: 22,
               borderColor: AppColor.transparent,
 

@@ -4,6 +4,7 @@ import 'package:nommia_crypto/helpers/app_layout.dart';
 import 'package:nommia_crypto/routes/route_paths.dart';
 import 'package:nommia_crypto/ui_molecules/app_background_conatiner/app_background_conatiner.dart';
 import 'package:nommia_crypto/ui_molecules/app_body/app_body.dart';
+import 'package:nommia_crypto/ui_molecules/app_dismis_keyboard.dart';
 import 'package:nommia_crypto/ui_molecules/app_primary_button.dart';
 import 'package:nommia_crypto/ui_molecules/app_text.dart';
 import 'package:nommia_crypto/ui_molecules/primary_textfield.dart';
@@ -19,13 +20,14 @@ class SignUp extends StatelessWidget {
     return Consumer<SignUpController>(
       builder: (context, model, child) {
         return Scaffold(
-          body: appBackgroundContainer(
-            isScroll: true,
-            children: [
-              _buildAppbar(context: context),
-
-              _buildBody(context: context, model: model),
-            ],
+          body: AppDismissKeyboard(
+            child: appBackgroundContainer(
+              isScroll: true,
+              children: [
+                // _buildAppbar(context: context),
+                _buildBody(context: context, model: model),
+              ],
+            ),
           ),
         );
       },
@@ -33,28 +35,28 @@ class SignUp extends StatelessWidget {
   }
 }
 
-Widget _buildAppbar({required BuildContext context}) {
-  return SizedBox(
-    height: ch(116),
-    child: Padding(
-      padding: EdgeInsets.symmetric(horizontal: cw(24)),
-      child: Row(
-        children: [
-          //Icon(Icons.arrow_back, color: AppColor.white)
-          ]),
-    ),
-  );
-}
+// Widget _buildAppbar({required BuildContext context}) {
+//   return SizedBox(
+//     height: ch(116),
+//     child: Padding(
+//       padding: EdgeInsets.symmetric(horizontal: cw(24)),
+//       child: Row(children: [Icon(Icons.arrow_back, color: AppColor.white)]),
+//     ),
+//   );
+// }
 
 Widget _buildBody({
   required BuildContext context,
   required SignUpController model,
 }) {
-  // final isNext =
-  //     model.emailController.text.isNotEmpty &&
-  //     model.passwordController.text.isNotEmpty;
+  final isNext =
+      model.emailController.text.isNotEmpty &&
+      model.reEnterPasswordController.text.isNotEmpty &&
+      model.passwordController.text.isNotEmpty;
   return appBody(
     body: [
+      SizedBox(height: 116),
+
       AppText(
         txt: "Sign Up to Nommia",
         fontSize: AppFontSize.f20,
@@ -109,7 +111,7 @@ Widget _buildBody({
       SizedBox(height: ch(9)),
       primaryTextField(
         obscureText: model.isPassHide,
-        controller: model.passwordController,
+        controller: model.reEnterPasswordController,
         hintText: "Re-Enter Password",
         border: InputBorder.none,
         suffixIcon: InkWell(
@@ -129,10 +131,14 @@ Widget _buildBody({
 
       AppButton(
         onPressed: () {
-          
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            RoutePaths.dashboardScreem,
+            (route) => false,
+          );
         },
         height: ch(44),
-      //  isButtonEnable: isNext,
+        //  isButtonEnable: isNext,
         text: "Sign Up",
       ),
       SizedBox(height: ch(74)),

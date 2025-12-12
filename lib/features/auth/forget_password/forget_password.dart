@@ -108,7 +108,7 @@ Widget _buildBody({
         onPressed: () {},
         height: ch(44),
         isButtonEnable: isNext,
-        text: "Sign Up",
+        text: "Continue",
       ),
       SizedBox(height: ch(74)),
 

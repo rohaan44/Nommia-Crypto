@@ -7,7 +7,7 @@ class AppTheme {
     brightness: Brightness.dark,
     fontFamily: 'Inter',
 
-    scaffoldBackgroundColor: AppColor.background,
+    scaffoldBackgroundColor: AppColor.fieldBg,
 
     splashFactory: NoSplash.splashFactory,
     splashColor: Colors.transparent,

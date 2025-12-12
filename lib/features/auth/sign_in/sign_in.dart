@@ -4,6 +4,7 @@ import 'package:nommia_crypto/helpers/app_layout.dart';
 import 'package:nommia_crypto/routes/route_paths.dart';
 import 'package:nommia_crypto/ui_molecules/app_background_conatiner/app_background_conatiner.dart';
 import 'package:nommia_crypto/ui_molecules/app_body/app_body.dart';
+import 'package:nommia_crypto/ui_molecules/app_dismis_keyboard.dart';
 import 'package:nommia_crypto/ui_molecules/app_primary_button.dart';
 import 'package:nommia_crypto/ui_molecules/app_text.dart';
 import 'package:nommia_crypto/ui_molecules/primary_textfield.dart';
@@ -19,13 +20,14 @@ class SignIn extends StatelessWidget {
     return Consumer<SignInController>(
       builder: (context, model, child) {
         return Scaffold(
-          body: appBackgroundContainer(
-            isScroll: true,
-            children: [
-              _buildAppbar(context: context),
-
-              _buildBody(context: context, model: model),
-            ],
+          body: AppDismissKeyboard(
+            child: appBackgroundContainer(
+              isScroll: true,
+              children: [
+                // _buildAppbar(context: context),
+                _buildBody(context: context, model: model),
+              ],
+            ),
           ),
         );
       },
@@ -40,13 +42,13 @@ Widget _buildAppbar({required BuildContext context}) {
       padding: EdgeInsets.symmetric(horizontal: cw(24)),
       child: Row(
         children: [
-        // GestureDetector(
-        //   onTap: (){
-        //     nav
-        //   },
-        //   child: Icon(Icons.arrow_back, color: AppColor.white))
-          
-          ]),
+          // GestureDetector(
+          //   onTap: (){
+          //     nav
+          //   },
+          //   child: Icon(Icons.arrow_back, color: AppColor.white))
+        ],
+      ),
     ),
   );
 }
@@ -57,6 +59,7 @@ Widget _buildBody({
 }) {
   return appBody(
     body: [
+      SizedBox(height: 116),
       AppText(
         txt: "Sign in to Nommia",
         fontSize: AppFontSize.f20,
@@ -118,9 +121,9 @@ Widget _buildBody({
       SizedBox(height: ch(38)),
 
       AppButton(
+        isButtonEnable: isNext,
         onPressed: () {
-         
-           Navigator.pushNamed(context, RoutePaths.dashboardScreem);
+          Navigator.pushNamed(context, RoutePaths.dashboardScreem);
         },
         height: ch(44),
         // isButtonEnable: isNext,

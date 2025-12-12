@@ -28,6 +28,7 @@ class MyApp extends StatelessWidget {
             // home:const HomeScreen(),
             initialRoute: RoutePaths.splashScreen,
             debugShowCheckedModeBanner: false,
+            // home: RoutePaths.splashScreen,
             onGenerateRoute: AppRouter.generateRoute,
           );
         },

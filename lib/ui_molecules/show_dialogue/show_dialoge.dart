@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:nommia_crypto/helpers/app_layout.dart';
 import 'package:nommia_crypto/ui_molecules/app_primary_button.dart';
 import 'package:nommia_crypto/utils/asset_utils.dart';
@@ -24,14 +23,12 @@ void showDepositDialog(
         child: SizedBox(
           width: cw(100.w),
           child: Padding(
-            padding: EdgeInsetsGeometry.symmetric(vertical: ch(37)),
+            padding: EdgeInsets.symmetric(vertical: ch(37)),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // 🚀 Icon
-                SvgPicture.asset(
+                Image.asset(
                   AssetUtils.rocketIcon,
-
                   height: ch(40),
                   fit: BoxFit.contain,
                 ),
@@ -58,7 +55,6 @@ void showDepositDialog(
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: AppFontSize.f14,
-
                     height: 1.4,
                     color: AppColor.c787B7F,
                   ),

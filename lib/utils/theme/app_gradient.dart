@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:nommia_crypto/utils/color_utils.dart';
 
@@ -10,6 +12,17 @@ class AppGradients {
       AppColor.c121717.withOpacity(0.76),
       AppColor.c121717,
       AppColor.c121717,
+    ],
+  );
+  static LinearGradient bgContainerGradient = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [
+      Colors.orangeAccent,
+      AppColor.c121717.withOpacity(0.1),
+      AppColor.c121717,
+
+      AppColor.c121717.withOpacity(0.76),
     ],
   );
   static LinearGradient goldenBtn = LinearGradient(

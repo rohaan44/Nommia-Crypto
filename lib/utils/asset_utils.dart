@@ -10,8 +10,14 @@ class AssetUtils {
   static const String coinsIcon = "${svg}coins_icon.svg";
   static const String infoIcon = "${svg}info.svg";
   static const String arrowTransfer = "${svg}arrow_transfer.svg";
-  static const String arrowDeposit = "${svg}arrow_deposite.svg";
+  static const String arrowDeposit = "${svg}arrow_depostie.svg";
   static const String arrowWithdra = "${svg}arrow_withdraw.svg";
-  static const String rocketIcon = "${svg}rocket_icon.svg";
   static const String nomaniaLogo = "${svg}nomania_logo.svg";
+  static const String cardIcon = "${svg}card_icon.svg";
+
+  // static const String depositIcon = "${svg}assets/svg/Subtraction 4.svg";
+
+  ///////********PNG Images ****/
+
+  static const String rocketIcon = "${png}rocket_icon.png";
 }
