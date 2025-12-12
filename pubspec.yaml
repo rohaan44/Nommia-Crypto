@@ -40,6 +40,7 @@ dependencies:
   flutter_svg: ^2.2.1
   # hive_flutter: ^1.1.0f
   sizer: ^2.0.15
+  syncfusion_flutter_charts: ^31.1.19
 
 dev_dependencies:
   flutter_test:

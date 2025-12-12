@@ -28,7 +28,7 @@ Widget primaryTextField({
   double? borderRadius,
   double? textFieldHeight,
 }) {
-  final fieldHeight = textFieldHeight ?? ch(46);
+  final fieldHeight = textFieldHeight ?? ch(40);
 
   return Container(
     height: fieldHeight,
@@ -44,7 +44,7 @@ Widget primaryTextField({
         children: [
           if (prefixIcon != null)
             Padding(
-              padding: EdgeInsets.only(left: cw(12), right: cw(8)),
+              padding: EdgeInsets.only(left: cw(0), right: cw(8)),
               child: prefixIcon,
             ),
           // SizedBox(width: cw(16)),
@@ -69,7 +69,7 @@ Widget primaryTextField({
                   textStyle ??
                   TextStyle(
                     color: AppColor.white,
-                    fontSize: AppFontSize.f16,
+                    fontSize: AppFontSize.f14,
                     fontWeight: FontWeight.w500,
                   ),
 
@@ -81,7 +81,7 @@ Widget primaryTextField({
                 hintStyle:
                     hintStyle ??
                     TextStyle(
-                      fontSize: AppFontSize.f15,
+                      fontSize: AppFontSize.f14,
                       fontWeight: FontWeight.w400,
                       color: AppColor.cFFFFFF.withOpacity(0.5),
                     ),
