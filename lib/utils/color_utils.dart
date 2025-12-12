@@ -1,30 +1,41 @@
 import 'package:flutter/material.dart';
 
 class AppColor {
-  // Core Backgrounds
-  static const Color background = c121717; // full app background
-  static const Color cardDark = Color(0xFF1A1C20); // containers, cards
-  static const Color darkGrey = Color(0xFF23252A); // input fields, chips
+  // Core App Colors
+  static const Color primaryBackground = Color(0xFF0D0F11);
+  static const Color cardBackground = Color(0xFF1A1C1F);
+  static const Color chartBackground = Color(0xFF141619);
+  static const Color inactiveGrey = Color(
+    0xFF2C303A,
+  ); // Used for toggles/borders
+  static const Color fieldBg = Color(0xFF1F242A);
 
   // Text Colors
-  static const Color white = Color(0xFFFFFFFF);
-  static const Color fieldBg = Color(0xFF1F242A);
-  static const Color c575B60 = Color(0xFF575B60);
-
-  static const Color lightGrey = Color(0xFF9FA4AD); // secondary text
+  static const Color textGrey = Color(0xFF8F96A3); // Secondary/Muted text
+  static const Color white = Colors.white;
+  static const Color black = Color(0xFF000000);
+  static const Color lightGrey = Color(0xFF9FA4AD); // Secondary text
   static const Color grey = Color(0xFF6F757E);
 
-  // Accent Colors
-  static const Color gold = Color(0xFFF3C566); // highlighted BUY/SELL button
-  static const Color yellow = Color(0xFFFFD978); // charts / small icons
+  // Accent & Action Colors
+  static const Color accentYellow = Color(0xFFF0B90B); // CTA / Market
+  static const Color sellRed = Color(0xFFE8505B);
+  static const Color buyGreen = Color(0xFF38B25E);
 
-  // Action Colors
-  static const Color red = Color(0xFFE55C5C); // sell / negative
-  static const Color green = Color(0xFF4ECB71); // buy / positive
-  static const Color black = Color(0xFF000000);
+  // Secondary / Legacy Colors (Preserved)
+  static const Color background = c121717;
+  static const Color cardDark = Color(0xFF1A1C20);
+  static const Color darkGrey = Color(0xFF23252A);
+  static const Color c575B60 = Color(0xFF575B60);
+
+  // Other Accents
+  static const Color gold = Color(0xFFF3C566);
+  static const Color yellow = Color(0xFFFFD978);
+  static const Color red = Color(0xFFE55C5C);
+  static const Color green = Color(0xFF4ECB71);
   static const Color cFFFFFF = Color(0xFFcfffff);
 
-  // Borders / Divider
+  // Borders
   static const Color border = Color(0xFF2C2E33);
   static const Color divider = Color(0xFF1D1F23);
 
