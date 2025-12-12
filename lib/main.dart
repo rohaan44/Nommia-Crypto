@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:nommia_crypto/features/dashboard/sub_screen/trade/trading_screen.dart';
 import 'package:nommia_crypto/main_provider/main_provider.dart';
 import 'package:nommia_crypto/routes/app_routes.dart';
 import 'package:nommia_crypto/routes/route_paths.dart';
@@ -27,9 +26,9 @@ class MyApp extends StatelessWidget {
             title: 'Nommia Crypto',
             theme: AppTheme.darkTheme,
             // home:const HomeScreen(),
-            // initialRoute: RoutePaths.splashScreen,
+            initialRoute: RoutePaths.splashScreen,
             debugShowCheckedModeBanner: false,
-            home: TradingScreen(),
+            // home: RoutePaths.splashScreen,
             onGenerateRoute: AppRouter.generateRoute,
           );
         },

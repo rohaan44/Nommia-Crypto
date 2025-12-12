@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:nommia_crypto/features/dashboard/sub_screen/trade/trading_controller.dart';
+import 'package:nommia_crypto/routes/route_paths.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:nommia_crypto/utils/color_utils.dart';
@@ -18,7 +19,7 @@ class TradingScreen extends StatelessWidget {
         backgroundColor: AppColor.primaryBackground,
         body: Column(
           children: [
-            _buildHeader(context),
+            //_buildHeader(context),
             Expanded(
               child: SingleChildScrollView(
                 child: Column(
@@ -29,7 +30,7 @@ class TradingScreen extends StatelessWidget {
                 ),
               ),
             ),
-            _buildBottomNav(),
+            // _buildBottomNav(),
           ],
         ),
       ),
@@ -83,7 +84,7 @@ class TradingScreen extends StatelessWidget {
   Widget _buildChartSection(BuildContext context) {
     return Column(
       children: [
-        _buildTradeInfoBar(),
+        _buildTradeInfoBar(context),
         _buildTimeframeToolbar(),
         Expanded(
           child: Container(
@@ -101,7 +102,7 @@ class TradingScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTradeInfoBar() {
+  Widget _buildTradeInfoBar(BuildContext context) {
     return Container(
       color: AppColor.primaryBackground,
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
@@ -127,7 +128,15 @@ class TradingScreen extends StatelessWidget {
               ),
             ],
           ),
-          _tradesInfo(),
+          _tradesInfo(
+            onTap: () {
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                RoutePaths.marketScreen,
+                (route) => false,
+              );
+            },
+          ),
           Row(
             children: [
               AppText(
@@ -443,17 +452,20 @@ class TradingScreen extends StatelessWidget {
     );
   }
 
-  Widget _tradesInfo() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: AppColor.accentYellow.withOpacity(0.2),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: AppText(
-        txt: "Trades 2",
-        color: AppColor.accentYellow,
-        fontSize: AppFontSize.f12,
+  Widget _tradesInfo({VoidCallback? onTap}) {
+    return GestureDetector(
+      onTap: onTap ?? () {},
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        decoration: BoxDecoration(
+          color: AppColor.accentYellow.withOpacity(0.2),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: AppText(
+          txt: "Trades 2",
+          color: AppColor.accentYellow,
+          fontSize: AppFontSize.f12,
+        ),
       ),
     );
   }
@@ -480,6 +492,11 @@ class TradingScreen extends StatelessWidget {
               _buildRiskToggles(controller),
               const SizedBox(height: 16),
               _buildDynamicInputs(context, controller),
+              const SizedBox(height: 20),
+              _buildMarginInfo(),
+              _buildLotSizeSelector(controller),
+              const SizedBox(height: 16),
+              _buildExecuteButton(controller),
               const SizedBox(height: 20),
             ],
           ),
@@ -732,7 +749,30 @@ class TradingScreen extends StatelessWidget {
       children: [
         for (int i = 0; i < controller.multiTpLevels.length; i++)
           _buildMultiTpRow(context, controller, i),
+        const SizedBox(height: 8),
+        _buildAddTpButton(controller),
       ],
+    );
+  }
+
+  Widget _buildAddTpButton(TradingController controller) {
+    return GestureDetector(
+      onTap: () => controller.addNewTpLevel(),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: AppColor.cardBackground,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.add, color: AppColor.textGrey, size: 16),
+            const SizedBox(width: 4),
+            AppText(txt: "Take Profit", color: AppColor.textGrey, fontSize: 12),
+          ],
+        ),
+      ),
     );
   }
 
@@ -992,141 +1032,234 @@ class TradingScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildBottomNav() {
-    return Consumer<TradingController>(
-      builder: (context, controller, child) {
-        return Container(
-          color: AppColor.primaryBackground,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16.0,
-                  vertical: 10,
-                ),
-                child: Row(
-                  children: [
-                    _lotCounter(controller),
-                    const SizedBox(width: 12),
-                    _lotDropdown(),
-                  ],
-                ),
-              ),
-              // CTA Button
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                child: SizedBox(
-                  width: double.infinity,
-                  height: 55,
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColor.accentYellow,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(28),
-                      ),
-                    ),
-                    child: AppText(
-                      txt: controller.ctaButtonText,
-                      color: Colors.black,
-                      fontSize: AppFontSize.f16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-              // Bottom Nav Bar
-              // Container(
-              //   padding: const EdgeInsets.symmetric(vertical: 8),
-              //   decoration: const BoxDecoration(
-              //     border: Border(top: BorderSide(color: AppColor.black)),
-              //   ),
-              //   child: Row(
-              //     mainAxisAlignment: MainAxisAlignment.spaceAround,
-              //     children: [
-              //       _navItem(Icons.public, "Trade", true),
-              //       _navItem(Icons.bar_chart, "Markets", false),
-              //       _navItem(Icons.home, "Home", false),
-              //       _navItem(Icons.copy_all, "Social", false),
-              //       _navItem(Icons.person_outline, "Accounts", false),
-              //     ],
-              //   ),
-              // ),
-            ],
+  // Widget _buildBottomNav() {
+  //   return Consumer<TradingController>(
+  //     builder: (context, controller, child) {
+  //       return Container(
+  //         color: AppColor.primaryBackground,
+  //         child: Column(
+  //           mainAxisSize: MainAxisSize.min,
+  //           children: [
+  //             Padding(
+  //               padding: const EdgeInsets.symmetric(
+  //                 horizontal: 16.0,
+  //                 vertical: 10,
+  //               ),
+  //               child: Row(
+  //                 children: [
+  //                   _lotCounter(controller),
+  //                   const SizedBox(width: 12),
+  //                   _lotDropdown(),
+  //                 ],
+  //               ),
+  //             ),
+  //             // CTA Button
+  //             Padding(
+  //               padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+  //               child: SizedBox(
+  //                 width: double.infinity,
+  //                 height: 55,
+  //                 child: ElevatedButton(
+  //                   onPressed: () {},
+  //                   style: ElevatedButton.styleFrom(
+  //                     backgroundColor: AppColor.accentYellow,
+  //                     shape: RoundedRectangleBorder(
+  //                       borderRadius: BorderRadius.circular(28),
+  //                     ),
+  //                   ),
+  //                   child: AppText(
+  //                     txt: controller.ctaButtonText,
+  //                     color: Colors.black,
+  //                     fontSize: AppFontSize.f16,
+  //                     fontWeight: FontWeight.bold,
+  //                   ),
+  //                 ),
+  //               ),
+  //             ),
+  //             // Bottom Nav Bar
+  //             // Container(
+  //             //   padding: const EdgeInsets.symmetric(vertical: 8),
+  //             //   decoration: const BoxDecoration(
+  //             //     border: Border(top: BorderSide(color: AppColor.black)),
+  //             //   ),
+  //             //   child: Row(
+  //             //     mainAxisAlignment: MainAxisAlignment.spaceAround,
+  //             //     children: [
+  //             //       _navItem(Icons.public, "Trade", true),
+  //             //       _navItem(Icons.bar_chart, "Markets", false),
+  //             //       _navItem(Icons.home, "Home", false),
+  //             //       _navItem(Icons.copy_all, "Social", false),
+  //             //       _navItem(Icons.person_outline, "Accounts", false),
+  //             //     ],
+  //             //   ),
+  //             // ),
+  //           ],
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
+
+  // Widget _lotCounter(TradingController controller) {
+  //   return Expanded(
+  //     flex: 2,
+  //     child: Container(
+  //       height: 50,
+  //       decoration: BoxDecoration(
+  //         border: Border.all(color: AppColor.inactiveGrey),
+  //         borderRadius: BorderRadius.circular(8),
+  //       ),
+  //       child: Row(
+  //         mainAxisAlignment: MainAxisAlignment.spaceAround,
+  //         children: [
+  //           IconButton(
+  //             onPressed: () => controller.setLotSize(controller.lotSize - 1),
+  //             icon: const Icon(Icons.remove, color: AppColor.textGrey),
+  //           ),
+  //           AppText(
+  //             txt: controller.lotSize.toString(),
+  //             fontSize: AppFontSize.f20,
+  //             fontWeight: FontWeight.w500,
+  //             color: AppColor.white,
+  //           ),
+  //           IconButton(
+  //             onPressed: () => controller.setLotSize(controller.lotSize + 1),
+  //             icon: const Icon(Icons.add, color: AppColor.textGrey),
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
+
+  // Widget _lotDropdown() {
+  //   return Expanded(
+  //     flex: 1,
+  //     child: Container(
+  //       height: 50,
+  //       decoration: BoxDecoration(
+  //         color: AppColor.cardBackground,
+  //         borderRadius: BorderRadius.circular(8),
+  //       ),
+  //       padding: const EdgeInsets.symmetric(horizontal: 12),
+  //       child: Row(
+  //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //         children: [
+  //           AppText(txt: "Lots", color: AppColor.white),
+  //           Icon(Icons.keyboard_arrow_down, color: AppColor.textGrey),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
+
+  Widget _buildMarginInfo() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          AppText(
+            txt: "\$13,119.15 (13.91%)",
+            color: AppColor.white,
+            fontWeight: FontWeight.bold,
+            fontSize: AppFontSize.f12,
           ),
-        );
-      },
+        ],
+      ),
     );
   }
 
-  Widget _lotCounter(TradingController controller) {
-    return Expanded(
-      flex: 2,
-      child: Container(
-        height: 50,
-        decoration: BoxDecoration(
-          border: Border.all(color: AppColor.inactiveGrey),
-          borderRadius: BorderRadius.circular(8),
+  Widget _buildLotSizeSelector(TradingController controller) {
+    return Container(
+      height: 50,
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      decoration: BoxDecoration(
+        color: AppColor.primaryBackground,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColor.divider),
+      ),
+      child: Row(
+        children: [
+          _buildStepperButton(
+            Icons.remove,
+            () => controller.decrementLotSize(),
+          ),
+          Expanded(
+            child: Center(
+              child: AppText(
+                txt: controller.lotSize.toString(),
+                color: AppColor.white,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          _buildStepperButton(Icons.add, () => controller.incrementLotSize()),
+          Container(width: 1, height: 30, color: AppColor.divider),
+          const SizedBox(width: 10),
+          Padding(
+            padding: const EdgeInsets.only(right: 12),
+            child: Row(
+              children: [
+                AppText(txt: "Lots", color: AppColor.white, fontSize: 14),
+                const SizedBox(width: 4),
+                const Icon(
+                  Icons.keyboard_arrow_down,
+                  color: AppColor.textGrey,
+                  size: 16,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStepperButton(IconData icon, VoidCallback onTap) {
+    return IconButton(
+      icon: Icon(icon, color: AppColor.textGrey),
+      onPressed: onTap,
+    );
+  }
+
+  Widget _buildExecuteButton(TradingController controller) {
+    return SizedBox(
+      width: double.infinity,
+      height: 50,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColor.accentYellow,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(25),
+          ),
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            IconButton(
-              onPressed: () => controller.setLotSize(controller.lotSize - 1),
-              icon: const Icon(Icons.remove, color: AppColor.textGrey),
-            ),
-            AppText(
-              txt: controller.lotSize.toString(),
-              fontSize: AppFontSize.f20,
-              fontWeight: FontWeight.w500,
-              color: AppColor.white,
-            ),
-            IconButton(
-              onPressed: () => controller.setLotSize(controller.lotSize + 1),
-              icon: const Icon(Icons.add, color: AppColor.textGrey),
-            ),
-          ],
+        onPressed: () {},
+        child: AppText(
+          txt: controller.ctaButtonText,
+          color: Colors.black,
+          fontWeight: FontWeight.bold,
+          fontSize: 16,
         ),
       ),
     );
   }
 
-  Widget _lotDropdown() {
-    return Expanded(
-      flex: 1,
-      child: Container(
-        height: 50,
-        decoration: BoxDecoration(
-          color: AppColor.cardBackground,
-          borderRadius: BorderRadius.circular(8),
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 12),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            AppText(txt: "Lots", color: AppColor.white),
-            Icon(Icons.keyboard_arrow_down, color: AppColor.textGrey),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _navItem(IconData icon, String label, bool isActive) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icon, color: isActive ? AppColor.accentYellow : AppColor.textGrey),
-        const SizedBox(height: 4),
-        AppText(
-          txt: label,
-          color: isActive ? AppColor.accentYellow : AppColor.textGrey,
-          fontSize: AppFontSize.f10,
-        ),
-      ],
-    );
-  }
+  //   Widget _navItem(IconData icon, String label, bool isActive) {
+  //     return Column(
+  //       mainAxisSize: MainAxisSize.min,
+  //       children: [
+  //         Icon(icon, color: isActive ? AppColor.accentYellow : AppColor.textGrey),
+  //         const SizedBox(height: 4),
+  //         AppText(
+  //           txt: label,
+  //           color: isActive ? AppColor.accentYellow : AppColor.textGrey,
+  //           fontSize: AppFontSize.f10,
+  //         ),
+  //       ],
+  //     );
+  //   }
 }
 
 class CandleData {

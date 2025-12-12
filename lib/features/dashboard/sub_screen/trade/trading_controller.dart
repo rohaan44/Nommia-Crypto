@@ -15,7 +15,7 @@ class TradingController with ChangeNotifier {
   // --- Core Order Configuration ---
   OrderType _selectedOrderType = OrderType.market;
   TradeSide _selectedSide = TradeSide.sell;
-  int _lotSize = 6;
+  double _lotSize = 6.0;
 
   // --- Risk Management Toggles (SL/TP/MultiTP) ---
   bool _stopLossEnabled = false; // Initial State (Trade 2.png) is OFF
@@ -51,7 +51,7 @@ class TradingController with ChangeNotifier {
   // Order Details
   OrderType get selectedOrderType => _selectedOrderType;
   TradeSide get selectedSide => _selectedSide;
-  int get lotSize => _lotSize;
+  double get lotSize => _lotSize;
   double get executionPrice => _executionPrice;
   double get pendingOrderPrice => _pendingOrderPrice;
 
@@ -101,9 +101,21 @@ class TradingController with ChangeNotifier {
     notifyListeners();
   }
 
-  void setLotSize(int newSize) {
-    if (newSize >= 1) {
+  void setLotSize(double newSize) {
+    if (newSize >= 0.01) {
       _lotSize = newSize;
+      notifyListeners();
+    }
+  }
+
+  void incrementLotSize() {
+    _lotSize += 1.0;
+    notifyListeners();
+  }
+
+  void decrementLotSize() {
+    if (_lotSize >= 1.0) {
+      _lotSize -= 1.0;
       notifyListeners();
     }
   }
@@ -135,6 +147,14 @@ class TradingController with ChangeNotifier {
       _multiTpLevels[index].isActive = value;
       notifyListeners();
     }
+  }
+
+  void addNewTpLevel() {
+    // Logic to add a new level, defaulting to sensible values
+    _multiTpLevels.add(
+      MultiTpLevel(price: _executionPrice, percentage: 10, isActive: true),
+    );
+    notifyListeners();
   }
 }
 
