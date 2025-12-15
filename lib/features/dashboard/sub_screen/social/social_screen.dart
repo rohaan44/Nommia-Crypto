@@ -586,8 +586,8 @@ class SocialScreen extends StatelessWidget {
                               topLeft: Radius.circular(22),
                               topRight: Radius.circular(22),
                             ),
-                            child: Image.network(
-                              "https://img.freepik.com/free-photo/day-trader-uses-computer-purchase-stocks-that-might-perform-well_482257-126398.jpg?semt=ais_hybrid&w=740&q=80",
+                            child: Image.asset(
+                              AssetUtils.buisnessImg,
                               height: ch(190),
                               width: 100.w,
                               fit: BoxFit.cover,

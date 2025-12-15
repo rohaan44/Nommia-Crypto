@@ -1,13 +1,24 @@
 import 'package:flutter/foundation.dart';
 
-class MarketScreenController with ChangeNotifier {}
+class MarketScreenController extends ChangeNotifier {
+  final List<MarketItem> _items = marketList;
+
+  List<MarketItem> get allItems => _items;
+
+  List<MarketItem> get favouriteItems => _items.where((e) => e.isFav).toList();
+
+  void toggleFavourite(MarketItem item) {
+    item.isFav = !item.isFav;
+    notifyListeners();
+  }
+}
 
 class MarketItem {
   final String pair;
   final String bid;
   final String ask;
   final double change;
-  final bool isFav;
+  bool isFav;
 
   MarketItem({
     required this.pair,

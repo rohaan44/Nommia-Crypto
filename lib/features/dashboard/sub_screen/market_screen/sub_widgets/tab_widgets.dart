@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:nommia_crypto/features/dashboard/home_screen_controller.dart';
 import 'package:nommia_crypto/features/dashboard/sub_screen/market_screen/market_screen.controller.dart';
 import 'package:nommia_crypto/helpers/app_layout.dart';
 import 'package:nommia_crypto/utils/color_utils.dart';
+import 'package:nommia_crypto/utils/font_size.dart';
+import 'package:provider/provider.dart';
 
 Widget marketHeader() {
   return Container(
-    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 10),
-    decoration: BoxDecoration(color: AppColor.transparent),
+    padding: EdgeInsets.symmetric(horizontal: cw(24), vertical: ch(10)),
     child: Row(
       children: [
         Expanded(flex: 4, child: Text("Assets", style: headerStyle())),
@@ -18,108 +20,121 @@ Widget marketHeader() {
   );
 }
 
-TextStyle headerStyle() =>
-    TextStyle(color: Colors.white70, fontWeight: FontWeight.w600, fontSize: 12);
-Widget marketRow(MarketItem item) {
-  return Container(
-    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-    margin: EdgeInsets.only(bottom: 2),
-    decoration: BoxDecoration(color: AppColor.transparent),
-    child: Row(
-      children: [
-        /// ⭐ + pair
-        Expanded(
-          flex: 4,
-          child: Row(
-            children: [
-              Icon(
-                item.isFav ? Icons.star : Icons.star_border,
-                size: 18,
-                color: item.isFav ? Colors.yellow : Colors.grey,
-              ),
-              SizedBox(width: 8),
-              Text(
-                item.pair,
-                style: TextStyle(color: Colors.white, fontSize: 14),
-              ),
-            ],
-          ),
-        ),
+TextStyle headerStyle() => TextStyle(
+  color: AppColor.cFFFFFF,
+  fontWeight: FontWeight.w500,
+  fontSize: AppFontSize.f12,
+);
 
-        /// Bid
-        Expanded(
-          flex: 2,
-          child: Text(
-            item.bid,
-            style: TextStyle(color: Colors.white, fontSize: 13),
-          ),
-        ),
-
-        /// Ask
-        Expanded(
-          flex: 2,
-          child: Text(
-            item.ask,
-            style: TextStyle(color: Colors.white, fontSize: 13),
-          ),
-        ),
-
-        /// Change (green/red)
-        Expanded(
-          flex: 2,
-          child: Text(
-            "${item.change.toStringAsFixed(2)}%",
-            style: TextStyle(
-              color: item.change >= 0 ? Colors.green : Colors.red,
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
+Widget marketRow(BuildContext context, MarketItem item, VoidCallback onFavTap) {
+  return GestureDetector(
+    behavior: HitTestBehavior.opaque,
+    onTap: () {
+      final controller = context.read<DashBoardScreenController>();
+      controller.onBottomNavTap(0);
+    },
+    child: Container(
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 4,
+            child: Row(
+              children: [
+                GestureDetector(
+                  onTap: onFavTap,
+                  child: Icon(
+                    item.isFav ? Icons.star : Icons.star_border,
+                    size: 25,
+                    color: item.isFav ? Colors.yellow : Colors.grey,
+                  ),
+                ),
+                SizedBox(width: cw(12)),
+                Text(
+                  item.pair,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: AppFontSize.f16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
             ),
           ),
-        ),
-      ],
+          Expanded(
+            flex: 2,
+            child: Text(
+              item.bid,
+              style: TextStyle(
+                color: AppColor.cFFFFFF,
+                fontSize: AppFontSize.f12,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 2,
+            child: Text(
+              item.ask,
+
+              style: TextStyle(
+                color: AppColor.cFFFFFF,
+                fontSize: AppFontSize.f12,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 2,
+            child: Text(
+              "${item.change.toStringAsFixed(2)}%",
+              style: TextStyle(
+                color: item.change >= 0 ? Colors.green : Colors.red,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      ),
     ),
   );
 }
 
-Widget allMarketList() {
+Widget allMarketList(MarketScreenController controller, BuildContext context) {
   return Column(
     children: [
       marketHeader(),
-      // Expanded(
-      //   child: ListView.builder(
-      //     itemCount: marketList.length,
-      //     itemBuilder: (_, i) => marketRow(marketList[i]),
-      //   ),
-      // ),
       Expanded(
         child: ListView.separated(
-          itemBuilder: (_, i) => marketRow(marketList[i]),
-          separatorBuilder: (context, index) => Padding(
-            padding: EdgeInsets.symmetric(horizontal: cw(24)),
-            child: Divider(color: AppColor.c1F242A),
+          itemCount: controller.allItems.length,
+          itemBuilder: (_, i) => marketRow(
+            context,
+            controller.allItems[i],
+            () => controller.toggleFavourite(controller.allItems[i]),
           ),
-          itemCount: marketList.length,
+          separatorBuilder: (_, __) => Divider(color: AppColor.c1F242A),
         ),
       ),
     ],
   );
 }
 
-Widget favouriteMarketList() {
-  final favs = marketList.where((e) => e.isFav).toList();
-
+Widget favouriteMarketList(
+  MarketScreenController controller,
+  BuildContext context,
+) {
   return Column(
     children: [
       marketHeader(),
-
       Expanded(
         child: ListView.separated(
-          itemBuilder: (_, i) => marketRow(favs[i]),
-          separatorBuilder: (context, index) => Padding(
-            padding: EdgeInsets.symmetric(horizontal: cw(24)),
-            child: Divider(color: AppColor.c1F242A),
+          itemCount: controller.favouriteItems.length,
+          itemBuilder: (_, i) => marketRow(
+            context,
+            controller.favouriteItems[i],
+            () => controller.toggleFavourite(controller.favouriteItems[i]),
           ),
-          itemCount: favs.length,
+          separatorBuilder: (_, __) => Divider(color: AppColor.c1F242A),
         ),
       ),
     ],
