@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors_in_immutables
+
 import 'package:flutter/material.dart';
 import 'package:nommia_crypto/features/bottom_navbar/bottom_navbar.dart';
 import 'package:nommia_crypto/features/dashboard/home_screen_controller.dart';

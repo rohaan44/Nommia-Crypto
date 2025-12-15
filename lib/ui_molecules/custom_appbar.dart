@@ -42,9 +42,7 @@ Widget customAppBar({
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             image: DecorationImage(
-              image: NetworkImage(
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTk_CtsORNDIpac7yGO8reKJQQ6zxVfthyqmQ&s",
-              ),
+              image: AssetImage(AssetUtils.profileImage),
               fit: BoxFit.cover,
             ),
             color: AppColor.red,

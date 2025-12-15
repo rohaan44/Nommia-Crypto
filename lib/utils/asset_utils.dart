@@ -20,6 +20,9 @@ class AssetUtils {
 
   ///////********PNG Images ****/
 
-  static const String rocketIcon = "${png}rocket_icon.png";
+  static const String rocketIcon = "${jpg}rocket_icon.png";
+  static const String profileImage = "${jpg}profile.jpg";
+  static const String buisnessImg = "${jpg}buisness_img.jpg";
+
   static const String chartContainer = "${svg}chart_container.svg";
 }
