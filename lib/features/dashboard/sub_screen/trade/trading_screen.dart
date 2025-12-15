@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:nommia_crypto/features/dashboard/home_screen_controller.dart';
 import 'package:nommia_crypto/features/dashboard/sub_screen/trade/trading_controller.dart';
 import 'package:nommia_crypto/helpers/app_layout.dart';
-import 'package:nommia_crypto/routes/route_paths.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:nommia_crypto/utils/color_utils.dart';

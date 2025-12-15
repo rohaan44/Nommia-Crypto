@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:nommia_crypto/features/dashboard/sub_screen/social/social_controller.dart';
 import 'package:nommia_crypto/helpers/app_layout.dart';
 import 'package:nommia_crypto/ui_molecules/app_text.dart';
 import 'package:nommia_crypto/ui_molecules/bottom_sheets/create_account_bottomsheet.dart';
 import 'package:nommia_crypto/ui_molecules/primary_textfield.dart';
-import 'package:nommia_crypto/utils/asset_utils.dart';
 import 'package:nommia_crypto/utils/color_utils.dart';
 import 'package:nommia_crypto/utils/font_size.dart';
 import 'package:provider/provider.dart';
