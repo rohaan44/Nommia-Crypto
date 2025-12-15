@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:nommia_crypto/features/dashboard/home_screen_controller.dart';
 import 'package:nommia_crypto/features/dashboard/sub_screen/trade/trading_controller.dart';
 import 'package:nommia_crypto/routes/route_paths.dart';
 import 'package:provider/provider.dart';
@@ -7,12 +8,15 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:nommia_crypto/utils/color_utils.dart';
 import 'package:nommia_crypto/utils/font_size.dart';
 import 'package:nommia_crypto/ui_molecules/app_text.dart';
+import 'package:nommia_crypto/features/dashboard/sub_screen/trade/widgets/trade_status_dialog.dart';
 
 class TradingScreen extends StatelessWidget {
   const TradingScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final model = Provider.of<DashBoardScreenController>(context);
+
     return ChangeNotifierProvider(
       create: (_) => TradingController(),
       child: Scaffold(
@@ -24,7 +28,10 @@ class TradingScreen extends StatelessWidget {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    SizedBox(height: 450, child: _buildChartSection(context)),
+                    SizedBox(
+                      height: 450,
+                      child: _buildChartSection(context, model),
+                    ),
                     _buildOrderControls(),
                   ],
                 ),
@@ -37,54 +44,54 @@ class TradingScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader(BuildContext context) {
-    return Container(
-      color: AppColor.primaryBackground,
-      padding: const EdgeInsets.fromLTRB(16, 50, 16, 10),
-      child: Row(
-        children: [
-          Expanded(
-            child: Container(
-              height: 45,
-              decoration: BoxDecoration(
-                color: AppColor.cardBackground,
-                borderRadius: BorderRadius.circular(25),
-              ),
-              child: Row(
-                children: [
-                  const SizedBox(width: 15),
-                  const Icon(Icons.search, color: AppColor.textGrey, size: 22),
-                  const SizedBox(width: 10),
-                  AppText(
-                    txt: "Search pairs ...",
-                    color: AppColor.textGrey,
-                    fontSize: AppFontSize.f14,
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(width: 16),
-          const Icon(
-            Icons.notifications_none,
-            color: AppColor.textGrey,
-            size: 26,
-          ),
-          const SizedBox(width: 16),
-          const CircleAvatar(
-            radius: 18,
-            backgroundColor: AppColor.accentYellow,
-            child: Icon(Icons.person, color: Colors.black, size: 24),
-          ),
-        ],
-      ),
-    );
-  }
+  // Widget _buildHeader(BuildContext context) {
+  //   return Container(
+  //     color: AppColor.primaryBackground,
+  //     padding: const EdgeInsets.fromLTRB(16, 50, 16, 10),
+  //     child: Row(
+  //       children: [
+  //         Expanded(
+  //           child: Container(
+  //             height: 45,
+  //             decoration: BoxDecoration(
+  //               color: AppColor.cardBackground,
+  //               borderRadius: BorderRadius.circular(25),
+  //             ),
+  //             child: Row(
+  //               children: [
+  //                 const SizedBox(width: 15),
+  //                 const Icon(Icons.search, color: AppColor.textGrey, size: 22),
+  //                 const SizedBox(width: 10),
+  //                 AppText(
+  //                   txt: "Search pairs ...",
+  //                   color: AppColor.textGrey,
+  //                   fontSize: AppFontSize.f14,
+  //                 ),
+  //               ],
+  //             ),
+  //           ),
+  //         ),
+  //         const SizedBox(width: 16),
+  //         const Icon(
+  //           Icons.notifications_none,
+  //           color: AppColor.textGrey,
+  //           size: 26,
+  //         ),
+  //         const SizedBox(width: 16),
+  //         const CircleAvatar(
+  //           radius: 18,
+  //           backgroundColor: AppColor.accentYellow,
+  //           child: Icon(Icons.person, color: Colors.black, size: 24),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
-  Widget _buildChartSection(BuildContext context) {
+  Widget _buildChartSection(BuildContext context, model) {
     return Column(
       children: [
-        _buildTradeInfoBar(context),
+        _buildTradeInfoBar(context, model),
         _buildTimeframeToolbar(),
         Expanded(
           child: Container(
@@ -102,7 +109,7 @@ class TradingScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTradeInfoBar(BuildContext context) {
+  Widget _buildTradeInfoBar(BuildContext context, model) {
     return Container(
       color: AppColor.primaryBackground,
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
@@ -130,11 +137,12 @@ class TradingScreen extends StatelessWidget {
           ),
           _tradesInfo(
             onTap: () {
-              Navigator.pushNamedAndRemoveUntil(
-                context,
-                RoutePaths.marketScreen,
-                (route) => false,
-              );
+              model.onBottomNavTap(4);
+              // Navigator.pushNamedAndRemoveUntil(
+              //   context,
+              //   RoutePaths.marketScreen,
+              //   (route) => false,
+              // );
             },
           ),
           Row(
@@ -496,7 +504,7 @@ class TradingScreen extends StatelessWidget {
               _buildMarginInfo(),
               _buildLotSizeSelector(controller),
               const SizedBox(height: 16),
-              _buildExecuteButton(controller),
+              _buildExecuteButton(controller, context),
               const SizedBox(height: 20),
             ],
           ),
@@ -1224,7 +1232,10 @@ class TradingScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildExecuteButton(TradingController controller) {
+  Widget _buildExecuteButton(
+    TradingController controller,
+    BuildContext context,
+  ) {
     return SizedBox(
       width: double.infinity,
       height: 50,
@@ -1235,7 +1246,44 @@ class TradingScreen extends StatelessWidget {
             borderRadius: BorderRadius.circular(25),
           ),
         ),
-        onPressed: () {},
+        onPressed: () {
+          // Generate Random ID (Mock)
+          String orderId = (1000000 + DateTime.now().millisecond).toString();
+
+          // Determine Action Text & Color
+          bool isBuy = controller.selectedSide == TradeSide.buy;
+          String sideText = isBuy ? "BUY" : "SELL";
+          Color actionColor = isBuy
+              ? const Color(0xff0B5AC3)
+              : AppColor.sellRed; // Matching Buy Blue / Sell Red
+
+          String orderType = controller.selectedOrderType == OrderType.market
+              ? "MARKET"
+              : "LIMIT";
+          String mainText = "$orderType $sideText";
+
+          // Pending Logic tweak: if Pending + Buy -> Buy Limit. If Pending + Sell -> Sell Limit.
+          if (controller.selectedOrderType == OrderType.pending) {
+            mainText = "$sideText LIMIT";
+          }
+
+          // Show Dialog
+          showDialog(
+            context: context,
+            builder: (context) => TradeStatusDialog(
+              status: TradeStatus.success, // Mocking Success
+              orderId: orderId,
+              mainText: mainText,
+              subText: controller.lotSize.toString(),
+              symbol:
+                  "GBPUSD", // Mocking dynamic symbol here, ideally from controller
+              price: controller.selectedOrderType == OrderType.market
+                  ? controller.executionPrice.toString()
+                  : controller.pendingOrderPrice.toString(),
+              mainColor: actionColor,
+            ),
+          );
+        },
         child: AppText(
           txt: controller.ctaButtonText,
           color: Colors.black,

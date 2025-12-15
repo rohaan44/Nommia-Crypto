@@ -13,6 +13,7 @@ class AssetUtils {
   static const String arrowDeposit = "${svg}arrow_depostie.svg";
   static const String arrowWithdra = "${svg}arrow_withdraw.svg";
   static const String nomaniaLogo = "${svg}nomania_logo.svg";
+  static const String nomaniaIcon = "${svg}nomania.svg";
   static const String cardIcon = "${svg}card_icon.svg";
 
   // static const String depositIcon = "${svg}assets/svg/Subtraction 4.svg";
@@ -20,4 +21,5 @@ class AssetUtils {
   ///////********PNG Images ****/
 
   static const String rocketIcon = "${png}rocket_icon.png";
+  static const String chartContainer = "${svg}chart_container.svg";
 }

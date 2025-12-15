@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:nommia_crypto/utils/asset_utils.dart';
 import 'package:nommia_crypto/utils/color_utils.dart';
 import 'package:sizer/sizer.dart';
 
@@ -69,12 +71,11 @@ class TradeBottomNavBar extends StatelessWidget {
                   backgroundColor: currentIndex == 2
                       ? AppColor.gold
                       : AppColor.darkGrey,
-                  child: Icon(
-                    Icons.home_max_outlined,
-                    color: currentIndex == 2
-                        ? AppColor.black
-                        : AppColor.lightGrey,
-                    size: 23.sp,
+                  child: SvgPicture.asset(
+                    AssetUtils.nomaniaIcon,
+                    color: currentIndex == 2 ? AppColor.black : AppColor.gold,
+                    width: 23.sp,
+                    height: 23.sp,
                   ),
                 ),
               ),
