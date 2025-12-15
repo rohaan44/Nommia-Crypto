@@ -43,7 +43,6 @@ class TradingController with ChangeNotifier {
   final List<MultiTpLevel> _multiTpLevels = [
     MultiTpLevel(price: 0.89943, percentage: 13, isActive: true),
     MultiTpLevel(price: 0.89943, percentage: 50, isActive: true),
-    MultiTpLevel(price: 0.89943, percentage: 38, isActive: false),
   ];
 
   // --- Getters (For UI consumption) ---
@@ -69,6 +68,14 @@ class TradingController with ChangeNotifier {
   double get takeProfitPrice => _takeProfitPrice;
   int get takeProfitPips => _takeProfitPips;
   List<MultiTpLevel> get multiTpLevels => _multiTpLevels;
+
+  int get maxTpLevels {
+    if (_lotSize >= 0.03) return 3;
+    if (_lotSize >= 0.02) return 2;
+    return 1;
+  }
+
+  bool get canAddMoreTpLevels => _multiTpLevels.length < maxTpLevels;
 
   // --- Actions / Setters (Methods to update state) ---
 
@@ -104,6 +111,16 @@ class TradingController with ChangeNotifier {
   void setLotSize(double newSize) {
     if (newSize >= 0.01) {
       _lotSize = newSize;
+
+      // Enforce TP Limit when Lot Size decreases
+      // We calculate the new limit immediately
+      int newLimit = maxTpLevels;
+      if (_multiTpEnabled && _multiTpLevels.length > newLimit) {
+        // Keep only the first 'newLimit' items
+        // e.g. if length is 3 and limit becomes 2, remove last
+        _multiTpLevels.removeRange(newLimit, _multiTpLevels.length);
+      }
+
       notifyListeners();
     }
   }
@@ -149,7 +166,16 @@ class TradingController with ChangeNotifier {
     }
   }
 
+  void updateMultiTpPercentage(int index, double value) {
+    if (index >= 0 && index < _multiTpLevels.length) {
+      _multiTpLevels[index].percentage = value;
+      notifyListeners();
+    }
+  }
+
   void addNewTpLevel() {
+    if (!canAddMoreTpLevels) return;
+
     // Logic to add a new level, defaulting to sensible values
     _multiTpLevels.add(
       MultiTpLevel(price: _executionPrice, percentage: 10, isActive: true),

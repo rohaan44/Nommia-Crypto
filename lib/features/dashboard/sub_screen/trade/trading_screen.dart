@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:nommia_crypto/features/dashboard/home_screen_controller.dart';
 import 'package:nommia_crypto/features/dashboard/sub_screen/trade/trading_controller.dart';
+import 'package:nommia_crypto/helpers/app_layout.dart';
 import 'package:nommia_crypto/routes/route_paths.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -277,6 +278,7 @@ class TradingScreen extends StatelessWidget {
               closeValueMapper: (d, _) => d.close,
               bearColor: AppColor.sellRed,
               bullColor: AppColor.buyGreen,
+              width: 0.2, // Reduced width
             ),
           ],
         ),
@@ -687,38 +689,46 @@ class TradingScreen extends StatelessWidget {
   ) {
     // 1. If Multi-TP is enabled, show the list of TP levels
     if (controller.multiTpEnabled) {
-      return _buildMultiTpSection(context, controller);
+      return Column(children: [_buildMultiTpSection(context, controller)]);
     }
 
     // 2. Standard SL/TP Logic
-    if (controller.takeProfitEnabled && !controller.stopLossEnabled) {
+    // if (controller.takeProfitEnabled && !controller.stopLossEnabled) {
+    //   return Row(
+    //     children: [
+    //       Expanded(child: _buildStopLossInputBox(controller)),
+    //       const SizedBox(width: 12),
+    //       Expanded(child: _buildTakeProfitInputBox(controller)),
+    //     ],
+    //   );
+    // }
+    if (controller.takeProfitEnabled || controller.stopLossEnabled) {
       return Row(
         children: [
-          Expanded(child: _buildPlaceholderBox()),
-          const SizedBox(width: 12),
           Expanded(child: _buildTakeProfitInputBox(controller)),
-        ],
-      );
-    }
-    if (controller.takeProfitEnabled && controller.stopLossEnabled) {
-      return Row(
-        children: [
-          Expanded(child: _buildStopLossInputBox(controller)),
+          const SizedBox(width: 12),
+          Column(
+            children: [
+              AppText(txt: "Price", color: AppColor.textGrey, fontSize: 12),
+              const SizedBox(height: 10),
+              AppText(txt: "Pips", color: AppColor.textGrey, fontSize: 12),
+            ],
+          ),
           const SizedBox(width: 12),
           Expanded(child: _buildTakeProfitInputBox(controller)),
         ],
       );
     }
     // If only SL shows
-    if (!controller.takeProfitEnabled && controller.stopLossEnabled) {
-      return Row(
-        children: [
-          Expanded(child: _buildStopLossInputBox(controller)),
-          const SizedBox(width: 12),
-          Expanded(child: _buildPlaceholderBox()),
-        ],
-      );
-    }
+    // if (!controller.takeProfitEnabled && controller.stopLossEnabled) {
+    //   return Row(
+    //     children: [
+    //       Expanded(child: _buildStopLossInputBox(controller)),
+    //       const SizedBox(width: 12),
+    //       Expanded(child: _buildPlaceholderBox()),
+    //     ],
+    //   );
+    // }
 
     return Container();
   }
@@ -755,6 +765,8 @@ class TradingScreen extends StatelessWidget {
   ) {
     return Column(
       children: [
+        _buildStatsGrid(),
+        const SizedBox(height: 16),
         for (int i = 0; i < controller.multiTpLevels.length; i++)
           _buildMultiTpRow(context, controller, i),
         const SizedBox(height: 8),
@@ -763,9 +775,106 @@ class TradingScreen extends StatelessWidget {
     );
   }
 
+  Widget _buildStatsGrid() {
+    return Row(
+      children: [
+        Expanded(child: _buildStatsColumn(left: true)),
+        const SizedBox(width: 8),
+        Column(
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                AppText(txt: "Price", color: AppColor.textGrey, fontSize: 10),
+                SizedBox(height: ch(10)),
+                AppText(txt: "Pips", color: AppColor.textGrey, fontSize: 10),
+              ],
+            ),
+
+            Column(
+              children: [
+                SizedBox(height: ch(28)),
+                AppText(txt: "P&L", color: AppColor.textGrey, fontSize: 10),
+                SizedBox(height: ch(10)),
+                AppText(txt: "%", color: AppColor.textGrey, fontSize: 10),
+              ],
+            ),
+          ],
+        ),
+        const SizedBox(width: 8),
+        Expanded(child: _buildStatsColumn(left: false)),
+      ],
+    );
+  }
+
+  Widget _buildStatsColumn({required bool left}) {
+    return Column(
+      children: [
+        Container(
+          width: cw(150),
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: const Color(0xff121212), // Darker background
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              AppText(txt: "0.89943", color: AppColor.textGrey, fontSize: 12),
+              const SizedBox(height: 8),
+              AppText(txt: "113", color: AppColor.textGrey, fontSize: 14),
+            ],
+          ),
+        ),
+        const SizedBox(height: 8),
+        Container(
+          width: cw(150),
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: const Color(0xff121212),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  AppText(
+                    txt: left ? "495.14" : "131.45",
+                    color: AppColor.textGrey,
+                    fontSize: 12,
+                  ),
+                  if (left)
+                    AppText(txt: "\$", color: AppColor.textGrey, fontSize: 10),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  AppText(
+                    txt: left ? "0.49" : "0.13",
+                    color: AppColor.textGrey,
+                    fontSize: 14,
+                  ),
+                  if (left)
+                    AppText(txt: "%", color: AppColor.textGrey, fontSize: 10),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildAddTpButton(TradingController controller) {
+    bool isEnabled = controller.canAddMoreTpLevels;
+
     return GestureDetector(
-      onTap: () => controller.addNewTpLevel(),
+      onTap: isEnabled ? () => controller.addNewTpLevel() : null,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
@@ -775,9 +884,21 @@ class TradingScreen extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.add, color: AppColor.textGrey, size: 16),
+            Icon(
+              Icons.add,
+              color: isEnabled
+                  ? AppColor.textGrey
+                  : AppColor.inactiveGrey.withOpacity(0.5),
+              size: 16,
+            ),
             const SizedBox(width: 4),
-            AppText(txt: "Take Profit", color: AppColor.textGrey, fontSize: 12),
+            AppText(
+              txt: "Take Profit",
+              color: isEnabled
+                  ? AppColor.textGrey
+                  : AppColor.inactiveGrey.withOpacity(0.5),
+              fontSize: 12,
+            ),
           ],
         ),
       ),
@@ -791,53 +912,101 @@ class TradingScreen extends StatelessWidget {
   ) {
     final level = controller.multiTpLevels[index];
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      child: Row(
+      margin: const EdgeInsets.only(bottom: 16),
+      child: Column(
         children: [
-          SizedBox(
-            width: 40,
-            child: AppText(
-              txt: "TP${index + 1}",
-              color: AppColor.textGrey,
-              fontSize: 12,
-            ),
-          ),
-          Transform.scale(
-            scale: 0.7,
-            child: CupertinoSwitch(
-              value: level.isActive,
-              activeColor: AppColor.accentYellow,
-              trackColor: AppColor.inactiveGrey,
-              onChanged: (val) => controller.updateMultiTpLevel(index, val),
-            ),
-          ),
-          Expanded(
-            child: SizedBox(
-              height: 20,
-              child: SliderTheme(
-                data: SliderTheme.of(context).copyWith(
-                  activeTrackColor: AppColor.white,
-                  inactiveTrackColor: AppColor.inactiveGrey,
-                  thumbColor: AppColor.white,
-                  thumbShape: const RoundSliderThumbShape(
-                    enabledThumbRadius: 6,
-                  ),
-                  trackHeight: 2,
-                ),
-                child: Slider(
-                  value: level.percentage,
-                  min: 0,
-                  max: 100,
-                  onChanged: (val) {},
+          // Row 1: Price Input
+          Row(
+            children: [
+              SizedBox(
+                width: 40,
+                child: AppText(
+                  txt: "Price",
+                  color: AppColor.white,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-            ),
+              const Spacer(),
+              Container(
+                width: 120, // Adjust as needed
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
+                decoration: BoxDecoration(
+                  color: const Color(0xff121212),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                alignment: Alignment.centerRight,
+                child: AppText(
+                  txt: level.price.toString(),
+                  color: AppColor.white,
+                  fontSize: 14,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(width: 8),
-          AppText(
-            txt: "${level.percentage.toInt()}%",
-            color: AppColor.white,
-            fontSize: 12,
+          const SizedBox(height: 8),
+          // Row 2: Slider + Percentage
+          Row(
+            children: [
+              SizedBox(
+                width: 40,
+                child: AppText(
+                  txt: "TP${index + 1}",
+                  color: AppColor.textGrey,
+                  fontSize: 12,
+                ),
+              ),
+              Expanded(
+                child: SizedBox(
+                  height: 20,
+                  child: SliderTheme(
+                    data: SliderTheme.of(context).copyWith(
+                      activeTrackColor: AppColor.white,
+                      inactiveTrackColor: AppColor.inactiveGrey.withOpacity(
+                        0.3,
+                      ),
+                      thumbColor: AppColor.white,
+                      thumbShape: const RoundSliderThumbShape(
+                        enabledThumbRadius: 8,
+                      ),
+                      overlayShape: SliderComponentShape.noOverlay,
+                      trackHeight: 2,
+                      tickMarkShape: const RoundSliderTickMarkShape(
+                        tickMarkRadius: 2,
+                      ),
+                      activeTickMarkColor: AppColor.inactiveGrey,
+                      inactiveTickMarkColor: AppColor.inactiveGrey,
+                    ),
+                    child: Slider(
+                      value: level.percentage,
+                      min: 0,
+                      max: 100,
+                      divisions: 4, // 0, 25, 50, 75, 100
+                      onChanged: (val) =>
+                          controller.updateMultiTpPercentage(index, val),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Container(
+                width: 60,
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                decoration: BoxDecoration(
+                  color: const Color(0xff121212),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                alignment: Alignment.center,
+                child: AppText(
+                  txt: "${level.percentage.toInt()}%",
+                  color: AppColor.white,
+                  fontSize: 12,
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -883,7 +1052,6 @@ class TradingScreen extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              AppText(txt: "Price", color: AppColor.textGrey, fontSize: 12),
               AppText(
                 txt: controller.takeProfitPrice.toString(),
                 color: AppColor.white,
@@ -894,9 +1062,9 @@ class TradingScreen extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              AppText(txt: "Pips", color: AppColor.textGrey, fontSize: 12),
               AppText(
                 txt: controller.takeProfitPips.toString(),
                 color: AppColor.white,

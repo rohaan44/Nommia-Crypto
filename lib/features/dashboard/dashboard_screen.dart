@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:nommia_crypto/features/bottom_navbar/bottom_navbar.dart';
 import 'package:nommia_crypto/features/dashboard/home_screen_controller.dart';
 import 'package:nommia_crypto/features/dashboard/sub_screen/account_screen/account_screen.dart';
+import 'package:nommia_crypto/features/dashboard/sub_screen/account_screen_2/profile_screen.dart';
 import 'package:nommia_crypto/features/dashboard/sub_screen/market_screen/market_screen.dart';
 import 'package:nommia_crypto/features/dashboard/sub_screen/social/social_screen.dart';
 import 'package:nommia_crypto/features/dashboard/sub_screen/trade/trading_screen.dart';
@@ -47,7 +48,7 @@ class DashBoardScreen extends StatelessWidget {
 final screenList = [
   TradingScreen(),
   MarketScreen(),
-  Container(height: 100.h, color: AppColor.red),
+  ProfileScreen(),
   SocialScreen(),
   AccountScreen(),
 ];
