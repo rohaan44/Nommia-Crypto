@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:nommia_crypto/helpers/app_layout.dart';
+import 'package:nommia_crypto/utils/asset_utils.dart';
 import 'package:nommia_crypto/utils/color_utils.dart';
 
 class DropdownBottomSheet extends StatelessWidget {
@@ -42,7 +44,8 @@ class DropdownBottomSheet extends StatelessWidget {
                       : AppColor.cFFFFFF,
                 ),
               ),
-              const Icon(Icons.keyboard_arrow_down_rounded, size: 40),
+              SvgPicture.asset(AssetUtils.downIcon),
+              // const Icon(Icons.keyboard_arrow_down_rounded, size: 30),
             ],
           ),
         ),

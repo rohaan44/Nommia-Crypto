@@ -10,7 +10,7 @@ import 'package:sizer/sizer.dart';
 void showDepositDialog(
   BuildContext context, {
   required String title,
-  required String description,
+  required Widget description,
   required VoidCallback onDone,
 }) {
   showDialog(
@@ -21,15 +21,15 @@ void showDepositDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         backgroundColor: AppColor.c0C1010, // your dark BG
         child: SizedBox(
-          width: cw(100.w),
+          width: cw(500),
           child: Padding(
             padding: EdgeInsets.symmetric(vertical: ch(37)),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Image.asset(
-                  AssetUtils.rocketIcon,
-                  height: ch(40),
+                  AssetUtils.frameIcon,
+                  height: ch(80),
                   fit: BoxFit.contain,
                 ),
 
@@ -40,8 +40,8 @@ void showDepositDialog(
                   title,
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontSize: AppFontSize.f18,
-                    fontWeight: FontWeight.w500,
+                    fontSize: AppFontSize.f20,
+                    fontWeight: FontWeight.w600,
                     height: 1.5,
                     color: AppColor.cFFFFFF,
                   ),
@@ -50,15 +50,7 @@ void showDepositDialog(
                 SizedBox(height: ch(30)),
 
                 // 📝 Description
-                Text(
-                  description,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: AppFontSize.f14,
-                    height: 1.4,
-                    color: AppColor.c787B7F,
-                  ),
-                ),
+                description,
 
                 SizedBox(height: ch(30)),
 

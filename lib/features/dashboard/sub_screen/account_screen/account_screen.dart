@@ -164,12 +164,13 @@ Widget _buildBottomBody({
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: List.generate(3, (index) {
           final titles = model.btnList[index]["title"];
           // final img = model.btnList[index]["img"];
 
           return primaryButton(
+            width: cw(100),
             context: context,
             // icon: SvgPicture.asset(img ?? ""),
             icon: SvgPicture.asset(
@@ -214,9 +215,8 @@ Widget _buildBottomBody({
 
       SizedBox(height: ch(22)),
 
-      if (model.selectedLabel == "Transfer")
-        ...[]
-      else ...[
+      if (model.selectedLabel == "Deposit" ||
+          model.selectedLabel == "Withdraw") ...[
         AppButton(
           height: ch(42),
           buttonColor: AppColor.c0C1010,
@@ -274,225 +274,186 @@ Widget _buildBottomBody({
         SizedBox(height: ch(27)),
       ],
 
-      if (model.isCrypto == true || model.selectedLabel == "Transfer") ...[
-        DropdownBottomSheet(
-          title: "Select Wallet",
-          selectedValue: model.selectedWallet,
-          items: model.accountList,
-          onSelect: (value) {
-            model.selectedWallet = value;
-          },
-        ),
+      if (model.selectedLabel == "Deposit" ||
+          model.selectedLabel == "Withdraw" ||
+          model.selectedLabel == "Transfer") ...[
+        if (model.isFiat == true) ...[
+          // Fiat Methods
+          AppText(
+            txt: "Fiat ${model.selectedLabel ?? "Deposit"} Methods",
+            fontSize: AppFontSize.f14,
 
-        SizedBox(height: ch(16)),
-        DropdownBottomSheet(
-          title: "Select Network",
-          selectedValue: model.selectedNetwork,
-          items: model.accountList,
-          onSelect: (value) {
-            model.selectedNetwork = value;
-          },
-        ),
-
-        SizedBox(height: ch(16)),
-
-        primaryTextField(
-          textFieldHeight: ch(100),
-          hintText: "hintText",
-          border: InputBorder.none,
-        ),
-        SizedBox(height: ch(16)),
-
-        primaryTextField(hintText: "Amount", border: InputBorder.none),
-        SizedBox(height: ch(16)),
-        AppButton(
-          onPressed: () {
-            showDepositDialog(
-              context,
-              title: "Your ${model.selectedLabel} request\nis being processed",
-              description:
-                  "Our team is verifying your transfer.\nYou will be notified once the funds are\nadded to your Nommia wallet.",
-              onDone: () {
-                Navigator.pop(context);
-              },
-            );
-          },
-          isButtonEnable: true,
-          isBorder: false,
-          text: model.selectedLabel == "Deposit"
-              ? "Deposit"
-              : model.selectedLabel == "Withdraw"
-              ? "Withdraw"
-              : "Transfer",
-        ),
-        SizedBox(height: ch(16)),
-
-        antiMoneyText(context: context, model: model),
-
-        SizedBox(height: ch(16)),
-
-        DottedDivider(
-          color: AppColor.fieldBg,
-          dashWidth: cw(6),
-          dashSpace: cw(5),
-          thickness: 1,
-        ),
-        SizedBox(height: ch(16)),
-
-        _buildRow(
-          context: context,
-          icon: AssetUtils.coinsIcon,
-          title: "Minimum Amount: \$3",
-        ),
-        _buildRow(
-          context: context,
-          icon: AssetUtils.clockIcon,
-          title:
-              "Processing time: Up to 2 hours\nThe processing time may be extended due to\nvarious reasons",
-        ),
-        _buildRow(
-          context: context,
-          icon: AssetUtils.infoIcon,
-          title: "Additional info.",
-        ),
-      ] else if (model.isFiat == true && model.selectedLabel == "Deposit") ...[
-        AppText(
-          txt: "Fiat ${model.selectedLabel ?? "Deposit"} Methods",
-          fontSize: AppFontSize.f14,
-
-          color: AppColor.cFFFFFF,
-          fontWeight: FontWeight.w400,
-          height: 1.5,
-        ),
-
-        SizedBox(height: ch(16)),
-        Container(
-          height: ch(60),
-          decoration: BoxDecoration(
-            color: AppColor.fieldBg,
-
-            borderRadius: BorderRadius.circular(cw(18)),
+            color: AppColor.cFFFFFF,
+            fontWeight: FontWeight.w400,
+            height: 1.5,
           ),
-          padding: EdgeInsets.symmetric(horizontal: cw(24)),
-          child: Row(
-            children: [
-              SvgPicture.asset(AssetUtils.cardIcon),
-              SizedBox(width: cw(15)),
 
-              AppText(
-                txt: "Credit/Debit Card",
-                fontSize: AppFontSize.f14,
+          SizedBox(height: ch(16)),
 
-                color: AppColor.cFFFFFF,
-                fontWeight: FontWeight.w500,
-                height: 1.5,
+          InkWell(
+            onTap: () {
+              // Handle Card selection
+            },
+            child: Container(
+              height: ch(60),
+              decoration: BoxDecoration(
+                color: AppColor.c0C1010, // Dark background
+                borderRadius: BorderRadius.circular(cw(18)),
+                border: Border.all(color: AppColor.fieldBg),
               ),
-            ],
-          ),
-        ),
-        SizedBox(height: ch(12)),
-        Container(
-          height: ch(60),
-          decoration: BoxDecoration(
-            color: AppColor.fieldBg,
-
-            borderRadius: BorderRadius.circular(cw(18)),
-          ),
-          padding: EdgeInsets.symmetric(horizontal: cw(24)),
-          child: Row(
-            children: [
-              SvgPicture.asset(AssetUtils.cardIcon),
-              SizedBox(width: cw(15)),
-
-              AppText(
-                txt: "Credit/Debit Card",
-                fontSize: AppFontSize.f14,
-
-                color: AppColor.cFFFFFF,
-                fontWeight: FontWeight.w500,
-                height: 1.5,
+              padding: EdgeInsets.symmetric(horizontal: cw(24)),
+              child: Row(
+                children: [
+                  SvgPicture.asset(
+                    AssetUtils.cardIcon,
+                    color: AppColor.cFFFFFF,
+                  ),
+                  SizedBox(width: cw(15)),
+                  AppText(
+                    txt: "Credit/Debit Card",
+                    fontSize: AppFontSize.f14,
+                    color: AppColor.cFFFFFF,
+                    fontWeight: FontWeight.w500,
+                    height: 1.5,
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
-      ] else if (model.isFiat == true && model.selectedLabel == "Withdraw") ...[
-        AppText(
-          txt: "Bank Account Details",
-          fontSize: AppFontSize.f14,
+          SizedBox(height: ch(12)),
+          InkWell(
+            onTap: () {
+              // Handle Bank selection
+            },
+            child: Container(
+              height: ch(60),
+              decoration: BoxDecoration(
+                color: AppColor.c0C1010,
+                borderRadius: BorderRadius.circular(cw(18)),
+                border: Border.all(color: AppColor.fieldBg),
+              ),
+              padding: EdgeInsets.symmetric(horizontal: cw(24)),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.account_balance_rounded,
+                    color: AppColor.cFFFFFF,
+                    size: 24,
+                  ),
+                  SizedBox(width: cw(15)),
+                  AppText(
+                    txt: "Bank Transfer",
+                    fontSize: AppFontSize.f14,
+                    color: AppColor.cFFFFFF,
+                    fontWeight: FontWeight.w500,
+                    height: 1.5,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ] else ...[
+          // Crypto Methods
+          DropdownBottomSheet(
+            title: "Select Wallet",
+            selectedValue: model.selectedWallet,
+            items: model.accountList,
+            onSelect: (value) {
+              model.selectedWallet = value;
+            },
+          ),
 
-          color: AppColor.cFFFFFF,
-          fontWeight: FontWeight.w400,
-          height: 1.5,
-        ),
+          SizedBox(height: ch(16)),
+          DropdownBottomSheet(
+            title: "Select Network",
+            selectedValue: model.selectedNetwork,
+            items: model.accountList,
+            onSelect: (value) {
+              model.selectedNetwork = value;
+            },
+          ),
 
-        SizedBox(height: ch(16)),
-        primaryTextField(
-          hintText: "Account Holder Name",
-          border: InputBorder.none,
-        ),
+          SizedBox(height: ch(16)),
 
-        SizedBox(height: ch(16)),
-        primaryTextField(hintText: "Account Number", border: InputBorder.none),
+          primaryTextField(
+            textFieldHeight: ch(100),
+            hintText: "hintText",
+            border: InputBorder.none,
+          ),
+          SizedBox(height: ch(16)),
 
-        SizedBox(height: ch(16)),
-        primaryTextField(
-          hintText: "Bank IFSC / Swift Code",
-          border: InputBorder.none,
-        ),
+          primaryTextField(hintText: "Amount", border: InputBorder.none),
+          SizedBox(height: ch(16)),
+          AppButton(
+            onPressed: () {
+              showDepositDialog(
+                context,
+                title: "${model.selectedLabel} Successfull",
+                description: Column(
+                  children: [
+                    AppText(
+                      txt:
+                          "Your funds has been ${model.selectedLabel}\nto your Account 1",
+                      textAlign: TextAlign.center,
+                      fontSize: AppFontSize.f14,
+                      height: 1.4,
+                      color: AppColor.c787B7F,
+                    ),
+                    SizedBox(height: ch(20)),
+                    AppText(
+                      txt:
+                          "You can now use the funds for\ntransactions, payments, or other wallet\n operations. Check your wallet summary\nfor updated balance.",
+                      textAlign: TextAlign.center,
+                      fontSize: AppFontSize.f14,
+                      height: 1.4,
+                      color: AppColor.c787B7F,
+                    ),
+                  ],
+                ),
+                onDone: () {
+                  Navigator.pop(context);
+                },
+              );
+            },
+            isButtonEnable: true,
+            isBorder: false,
+            text: model.selectedLabel == "Deposit"
+                ? "Deposit"
+                : model.selectedLabel == "Withdraw"
+                ? "Withdraw"
+                : "Transfer",
+          ),
+          SizedBox(height: ch(16)),
 
-        SizedBox(height: ch(16)),
-        primaryTextField(hintText: "Amount", border: InputBorder.none),
-        SizedBox(height: ch(16)),
-        AppButton(
-          onPressed: () {
-            showDepositDialog(
-              context,
-              title: "Your ${model.selectedLabel} request\nis being processed",
-              description:
-                  "Our team is verifying your transfer.\nYou will be notified once the funds are\nadded to your Nommia wallet.",
-              onDone: () {
-                Navigator.pop(context);
-              },
-            );
-          },
-          isButtonEnable: true,
-          isBorder: false,
-          text: model.selectedLabel == "Deposit"
-              ? "Deposit"
-              : model.selectedLabel == "Withdraw"
-              ? "Withdraw"
-              : "Transfer",
-        ),
-        SizedBox(height: ch(16)),
+          antiMoneyText(context: context, model: model),
 
-        antiMoneyText(context: context, model: model),
+          SizedBox(height: ch(16)),
 
-        SizedBox(height: ch(16)),
+          DottedDivider(
+            color: AppColor.fieldBg,
+            dashWidth: cw(6),
+            dashSpace: cw(5),
+            thickness: 1,
+          ),
+          SizedBox(height: ch(16)),
 
-        DottedDivider(
-          color: AppColor.fieldBg,
-          dashWidth: cw(6),
-          dashSpace: cw(5),
-          thickness: 1,
-        ),
-        SizedBox(height: ch(16)),
-
-        _buildRow(
-          context: context,
-          icon: AssetUtils.coinsIcon,
-          title: "Minimum Amount: \$3",
-        ),
-        _buildRow(
-          context: context,
-          icon: AssetUtils.clockIcon,
-          title:
-              "Processing time: Up to 2 hours\nThe processing time may be extended due to\nvarious reasons",
-        ),
-        _buildRow(
-          context: context,
-          icon: AssetUtils.infoIcon,
-          title: "Additional info.",
-        ),
+          _buildRow(
+            context: context,
+            icon: AssetUtils.coinsIcon,
+            title: model.selectedLabel=="Deposit"? "Minimum Amount: \$10":"Minimum Amount: \$3" ,
+          ),
+          _buildRow(
+            context: context,
+            icon: AssetUtils.clockIcon,
+            title:
+                "Processing time: Up to 2 hours\nThe processing time may be extended due to\nvarious reasons",
+          ),
+          _buildRow(
+            context: context,
+            icon: AssetUtils.infoIcon,
+            title: "Additional info.",
+          ),
+        ],
       ],
     ],
   );

@@ -4,6 +4,7 @@ import 'package:nommia_crypto/helpers/app_layout.dart';
 import 'package:nommia_crypto/ui_molecules/app_text.dart';
 import 'package:nommia_crypto/ui_molecules/bottom_sheets/create_account_bottomsheet.dart';
 import 'package:nommia_crypto/ui_molecules/primary_textfield.dart';
+import 'package:nommia_crypto/utils/asset_utils.dart';
 import 'package:nommia_crypto/utils/color_utils.dart';
 import 'package:nommia_crypto/utils/font_size.dart';
 import 'package:provider/provider.dart';
@@ -192,6 +193,7 @@ class SocialScreen extends StatelessWidget {
               ),
             ),
           ),
+          Image.asset(AssetUtils.statsPng),
           const SizedBox(height: 40), // Spacing for chart visual area
           // Strategy Name
           AppText(txt: "Strategy Name", color: AppColor.textGrey, fontSize: 12),
@@ -236,12 +238,11 @@ class SocialScreen extends StatelessWidget {
                         ),
                         side: BorderSide.none,
                       ),
-                      child: const Text(
-                        "- Funds",
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      child: AppText(
+                        txt: "- Funds",
+                        color: Colors.black,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
                       ),
                     ),
                   ),
@@ -259,12 +260,11 @@ class SocialScreen extends StatelessWidget {
                         ),
                         side: BorderSide.none,
                       ),
-                      child: const Text(
-                        "+ Funds",
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      child: AppText(
+                        txt: "+ Funds",
+                        color: Colors.black,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
                       ),
                     ),
                   ),
@@ -285,12 +285,11 @@ class SocialScreen extends StatelessWidget {
                   ),
                   side: BorderSide.none,
                 ),
-                child: const Text(
-                  "Copy",
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                  ),
+                child: AppText(
+                  txt: "Copy",
+                  color: Colors.black,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
                 ),
               ),
             ),
@@ -422,7 +421,7 @@ class SocialScreen extends StatelessWidget {
                         txt: "OK",
                         color: Colors.black,
                         fontSize: 16,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),
@@ -512,7 +511,7 @@ class SocialScreen extends StatelessWidget {
                         txt: "OK",
                         color: Colors.black,
                         fontSize: 16,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),

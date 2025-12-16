@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:nommia_crypto/ui_molecules/custom_appbar.dart';
 import 'package:provider/provider.dart';
 import 'package:nommia_crypto/features/dashboard/sub_screen/market_screen/market_screen.controller.dart';
 import 'package:nommia_crypto/features/dashboard/sub_screen/market_screen/sub_widgets/tab_widgets.dart';
@@ -39,62 +40,11 @@ class _MarketScreenState extends State<MarketScreen>
       child: Consumer<MarketScreenController>(
         builder: (context, controller, _) {
           return Scaffold(
-            extendBodyBehindAppBar: true,
-
-            appBar: PreferredSize(
-              preferredSize: Size.fromHeight(ch(130)),
-              child: AppBar(
-                backgroundColor: Colors.transparent,
-                elevation: 0,
-                flexibleSpace: Container(
-                  decoration: BoxDecoration(gradient: AppGradients.bgGradient),
-                  child: Column(
-                    children: [
-                      SizedBox(height: 40),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: cw(24)),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: primaryTextField(
-                                fillColor: AppColor.fieldBg,
-                                prefixIcon: Icon(
-                                  Icons.search,
-                                  color: AppColor.cFFFFFF,
-                                  size: 18,
-                                ),
-                                hintText: "Search pairs ...",
-                                borderRadius: 22,
-                                border: InputBorder.none,
-                              ),
-                            ),
-                            SizedBox(width: cw(12)),
-                            SvgPicture.asset(AssetUtils.notifications),
-                            SizedBox(width: cw(12)),
-                            CircleAvatar(
-                              radius: ch(21),
-                              backgroundImage: NetworkImage(
-                                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTk_CtsORNDIpac7yGO8reKJQQ6zxVfthyqmQ&s",
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Spacer(),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: TabBar(
-                          dividerColor: AppColor.c1F242A,
-                          labelPadding: EdgeInsets.only(right: cw(50)),
-                          controller: _tabController,
-                          isScrollable: true,
-                          tabs: tabs.map((e) => Tab(text: e)).toList(),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+            appBar: customAppBar(
+              height: 130,
+              context: context,
+              model: controller,
+              searchFieldController: TextEditingController(),
             ),
 
             /// 🔥 BODY

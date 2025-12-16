@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:nommia_crypto/utils/asset_utils.dart';
 import 'package:nommia_crypto/utils/color_utils.dart';
 import 'package:sizer/sizer.dart';
@@ -23,7 +23,7 @@ class TradeBottomNavBar extends StatelessWidget {
         clipBehavior: Clip.none,
         alignment: Alignment.bottomCenter,
         children: [
-          // Bottom Bar Background
+          // Bottom Bar
           Positioned(
             bottom: 0,
             child: Container(
@@ -34,21 +34,25 @@ class TradeBottomNavBar extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  _item(icon: Icons.public, label: "Trade", index: 0),
+                  _item(icon: AssetUtils.tradeIcon, label: "Trade", index: 0),
                   _item(
-                    icon: Icons.stacked_line_chart,
+                    icon: AssetUtils.marketIcon,
                     label: "Markets",
                     index: 1,
                   ),
                   SizedBox(width: 18.w),
-                  _item(icon: Icons.style, label: "Social", index: 3),
-                  _item(icon: Icons.person, label: "Accounts", index: 4),
+                  _item(icon: AssetUtils.socialIcon, label: "Social", index: 3),
+                  _item(
+                    icon: AssetUtils.accountIcon,
+                    label: "Accounts",
+                    index: 4,
+                  ),
                 ],
               ),
             ),
           ),
 
-          // CENTER FLOATING BUTTON
+          // Center Floating Button
           Positioned(
             bottom: 4.5.h,
             child: GestureDetector(
@@ -73,9 +77,12 @@ class TradeBottomNavBar extends StatelessWidget {
                       : AppColor.darkGrey,
                   child: SvgPicture.asset(
                     AssetUtils.nomaniaIcon,
-                    color: currentIndex == 2 ? AppColor.black : AppColor.gold,
                     width: 23.sp,
                     height: 23.sp,
+                    colorFilter: ColorFilter.mode(
+                      currentIndex == 2 ? AppColor.black : AppColor.gold,
+                      BlendMode.srcIn,
+                    ),
                   ),
                 ),
               ),
@@ -87,19 +94,25 @@ class TradeBottomNavBar extends StatelessWidget {
   }
 
   Widget _item({
-    required IconData icon,
+    required String icon,
     required String label,
     required int index,
   }) {
+    final bool isSelected = currentIndex == index;
+
     return GestureDetector(
       onTap: () => onTap(index),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
+          SvgPicture.asset(
             icon,
-            size: 20.sp,
-            color: currentIndex == index ? AppColor.gold : AppColor.grey,
+            width: 20.sp,
+            height: 20.sp,
+            colorFilter: ColorFilter.mode(
+              isSelected ? AppColor.gold : AppColor.grey,
+              BlendMode.srcIn, // fixes SVG hardcoded color issue
+            ),
           ),
           SizedBox(height: 0.4.h),
           Text(
@@ -107,7 +120,7 @@ class TradeBottomNavBar extends StatelessWidget {
             style: TextStyle(
               fontSize: 8.5.sp,
               fontWeight: FontWeight.w600,
-              color: currentIndex == index ? AppColor.gold : AppColor.grey,
+              color: isSelected ? AppColor.gold : AppColor.grey,
             ),
           ),
         ],

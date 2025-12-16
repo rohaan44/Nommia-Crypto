@@ -51,7 +51,7 @@ class AppText extends StatelessWidget {
             // fontFamily: fontFamily ,
             fontSize: fontSize ?? AppFontSize.f14,
             fontFamily: "Inter",
-            fontWeight: fontWeight ?? FontWeight.w500,
+            fontWeight: fontWeight ?? FontWeight.w400,
             color: color ?? AppColor.white,
             height: height ?? 1.0,
             letterSpacing: letterspacing ?? 0,

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:nommia_crypto/features/dashboard/sub_screen/account_screen_2/profile_controller.dart';
+import 'package:nommia_crypto/ui_molecules/app_primary_button.dart';
+import 'package:nommia_crypto/utils/asset_utils.dart';
 import 'package:nommia_crypto/utils/color_utils.dart';
 import 'package:nommia_crypto/ui_molecules/app_text.dart';
+import 'package:nommia_crypto/utils/font_size.dart';
 import 'package:provider/provider.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -573,38 +576,58 @@ class ProfileScreen extends StatelessWidget {
       builder: (context) {
         return AlertDialog(
           backgroundColor: AppColor.cardBackground,
+          icon: Image.asset(AssetUtils.tradeCancelImg, width: 100, height: 50),
           title: AppText(
+            textAlign: TextAlign.center,
             txt: "Confirm Close Trade",
             color: AppColor.white,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w400,
+            fontSize: AppFontSize.f18,
           ),
           content: AppText(
+            textAlign: TextAlign.center,
             txt:
                 "Are you sure you want to close this active trade?\nThis action cannot be undone.",
             color: AppColor.textGrey,
             height: 1.5,
           ),
           actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: AppText(txt: "Cancel", color: AppColor.textGrey),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context); // Close Dialog
-                // Re-open Sheet in Delete Mode
-                _showTradeDetailSheet(
-                  context,
-                  trade,
-                  controller,
-                  isDeleteMode: true,
-                );
-              },
-              child: AppText(
-                txt: "Confirm",
-                color: AppColor.accentYellow,
-                fontWeight: FontWeight.bold,
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: AppColor.textGrey),
+                    ),
+                    onPressed: () => Navigator.pop(context),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 22),
+                      child: AppText(txt: "Cancel", color: AppColor.textGrey),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 20),
+                Expanded(
+                  child: AppButton(
+                    onPressed: () {
+                      Navigator.pop(context); // Close Dialog
+                      // Re-open Sheet in Delete Mode
+                      _showTradeDetailSheet(
+                        context,
+                        trade,
+                        controller,
+                        isDeleteMode: true,
+                      );
+                    },
+                    child: AppText(
+                      txt: "Confirm",
+                      color: AppColor.background,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         );

@@ -398,7 +398,7 @@ class TradingScreen extends StatelessWidget {
             txt: price,
             color: color,
             fontSize: 10,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w400,
           ),
           AppText(txt: type, color: color, fontSize: 8),
         ],
@@ -540,7 +540,7 @@ class TradingScreen extends StatelessWidget {
                   color: controller.selectedOrderType == OrderType.market
                       ? Colors.black
                       : AppColor.textGrey,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w400,
                   fontSize: AppFontSize.f14,
                 ),
               ),
@@ -562,7 +562,7 @@ class TradingScreen extends StatelessWidget {
                   color: controller.selectedOrderType == OrderType.pending
                       ? Colors.black
                       : AppColor.textGrey,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w400,
                   fontSize: AppFontSize.f14,
                 ),
               ),
@@ -598,7 +598,7 @@ class TradingScreen extends StatelessWidget {
                 color: controller.selectedSide == TradeSide.sell
                     ? AppColor.white
                     : AppColor.sellRed,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w400,
                 fontSize: AppFontSize.f16,
               ),
             ),
@@ -627,7 +627,7 @@ class TradingScreen extends StatelessWidget {
                 color: controller.selectedSide == TradeSide.buy
                     ? AppColor.white
                     : AppColor.buyGreen,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w400,
                 fontSize: AppFontSize.f16,
               ),
             ),
@@ -749,7 +749,7 @@ class TradingScreen extends StatelessWidget {
           AppText(
             txt: controller.pendingOrderPrice.toString(),
             color: AppColor.white,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w400,
             fontSize: 16,
           ),
         ],
@@ -923,7 +923,7 @@ class TradingScreen extends StatelessWidget {
                   txt: "Price",
                   color: AppColor.white,
                   fontSize: 12,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w400,
                 ),
               ),
               const Spacer(),
@@ -1030,7 +1030,7 @@ class TradingScreen extends StatelessWidget {
             txt: "113",
             color: AppColor.white,
             fontSize: 15,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w400,
           ),
         ],
       ),
@@ -1054,7 +1054,7 @@ class TradingScreen extends StatelessWidget {
               AppText(
                 txt: controller.takeProfitPrice.toString(),
                 color: AppColor.white,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w400,
                 fontSize: 14,
               ),
             ],
@@ -1067,7 +1067,7 @@ class TradingScreen extends StatelessWidget {
               AppText(
                 txt: controller.takeProfitPips.toString(),
                 color: AppColor.white,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w400,
                 fontSize: 14,
               ),
             ],
@@ -1434,16 +1434,21 @@ class TradingScreen extends StatelessWidget {
             mainText = "$sideText LIMIT";
           }
 
+          // Randomize Status for Demo
+          bool isSuccess = DateTime.now().millisecond % 2 == 0;
+          TradeStatus status = isSuccess
+              ? TradeStatus.success
+              : TradeStatus.failed;
+
           // Show Dialog
           showDialog(
             context: context,
             builder: (context) => TradeStatusDialog(
-              status: TradeStatus.success, // Mocking Success
+              status: status,
               orderId: orderId,
               mainText: mainText,
               subText: controller.lotSize.toString(),
-              symbol:
-                  "GBPUSD", // Mocking dynamic symbol here, ideally from controller
+              symbol: "GBPUSD",
               price: controller.selectedOrderType == OrderType.market
                   ? controller.executionPrice.toString()
                   : controller.pendingOrderPrice.toString(),
