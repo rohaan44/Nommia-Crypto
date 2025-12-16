@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+
 import 'package:nommia_crypto/ui_molecules/custom_appbar.dart';
 import 'package:provider/provider.dart';
 import 'package:nommia_crypto/features/dashboard/sub_screen/market_screen/market_screen.controller.dart';
 import 'package:nommia_crypto/features/dashboard/sub_screen/market_screen/sub_widgets/tab_widgets.dart';
-import 'package:nommia_crypto/helpers/app_layout.dart';
-import 'package:nommia_crypto/ui_molecules/primary_textfield.dart';
-import 'package:nommia_crypto/utils/asset_utils.dart';
+
 import 'package:nommia_crypto/utils/color_utils.dart';
 import 'package:nommia_crypto/utils/theme/app_gradient.dart';
+import 'package:nommia_crypto/utils/font_size.dart';
 
 class MarketScreen extends StatefulWidget {
   @override
@@ -51,14 +50,34 @@ class _MarketScreenState extends State<MarketScreen>
             body: SafeArea(
               child: Container(
                 decoration: BoxDecoration(gradient: AppGradients.bgGradient),
-                child: TabBarView(
-                  controller: _tabController,
+                child: Column(
                   children: [
-                    allMarketList(controller, context),
-                    favouriteMarketList(controller, context),
-                    allMarketList(controller, context),
-                    allMarketList(controller, context),
-                    allMarketList(controller, context),
+                    TabBar(
+                      controller: _tabController,
+                      isScrollable: true,
+                      tabAlignment: TabAlignment.start,
+                      padding: EdgeInsets.zero,
+                      indicatorColor: AppColor.white,
+                      labelColor: AppColor.white,
+                      unselectedLabelColor: AppColor.textGrey,
+                      labelStyle: TextStyle(
+                        fontSize: AppFontSize.f14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      tabs: tabs.map((e) => Tab(text: e)).toList(),
+                    ),
+                    Expanded(
+                      child: TabBarView(
+                        controller: _tabController,
+                        children: [
+                          allMarketList(controller, context),
+                          favouriteMarketList(controller, context),
+                          allMarketList(controller, context),
+                          allMarketList(controller, context),
+                          allMarketList(controller, context),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               ),
