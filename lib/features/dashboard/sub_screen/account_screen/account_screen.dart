@@ -46,7 +46,7 @@ Widget _buildBody({
         children: [
           Expanded(
             child: DropdownBottomSheet(
-              title: "Select Country",
+              title: "Account 1",
               selectedValue: model.selectedCountry,
               items: model.accountList,
               onSelect: (value) {
@@ -98,9 +98,8 @@ Widget _buildBody({
         child: AppText(
           txt: "Total Balance",
           fontSize: AppFontSize.f14,
-
-          color: AppColor.cFFFFFF,
-          fontWeight: FontWeight.w300,
+          color: AppColor.cFFFFFF.withOpacity(0.4),
+          fontWeight: FontWeight.w500,
         ),
       ),
       SizedBox(height: ch(7)),
@@ -129,7 +128,7 @@ Widget _buildBody({
                 fontSize: AppFontSize.f14,
 
                 color: AppColor.c787B7F,
-                fontWeight: FontWeight.w300,
+                fontWeight: FontWeight.w500,
                 height: 1.5,
               ),
 
@@ -145,7 +144,7 @@ Widget _buildBody({
           );
         },
         separatorBuilder: (context, index) {
-          return Divider(color: AppColor.fieldBg);
+          return Divider(thickness: ch(1), color: Color(0xff1F242A));
         },
         itemCount: model.dataList.length,
       ),
@@ -387,31 +386,52 @@ Widget _buildBottomBody({
           AppButton(
             onPressed: () {
               showDepositDialog(
+                fontSize: AppFontSize.f18,
                 context,
-                title: "${model.selectedLabel} Successfull",
-                description: Column(
-                  children: [
-                    AppText(
-                      txt:
-                          "Your funds has been ${model.selectedLabel}\nto your Account 1",
-                      textAlign: TextAlign.center,
-                      fontSize: AppFontSize.f14,
-                      height: 1.4,
-                      color: AppColor.c787B7F,
-                    ),
-                    SizedBox(height: ch(20)),
-                    AppText(
-                      txt:
-                          "You can now use the funds for\ntransactions, payments, or other wallet\n operations. Check your wallet summary\nfor updated balance.",
-                      textAlign: TextAlign.center,
-                      fontSize: AppFontSize.f14,
-                      height: 1.4,
-                      color: AppColor.c787B7F,
-                    ),
-                  ],
+                image: AssetUtils.rocketIcon,
+                title:
+                    "Your ${model.selectedLabel!.toLowerCase()} request is being processed",
+                fontWeight: FontWeight.w500,
+
+                description: AppText(
+                  txt:
+                      "Our team is verifying your transfer.\nYou will be notified once the funds are\nadded to your Nommia wallet.",
+                  textAlign: TextAlign.center,
+                  fontSize: AppFontSize.f13,
+                  height: 1.4,
+                  color: AppColor.c787B7F,
                 ),
+
                 onDone: () {
-                  Navigator.pop(context);
+                  showDepositDialog(
+                    onDone: () {
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                    },
+                    context,
+                    title: "${model.selectedLabel} Successfull",
+                    description: Column(
+                      children: [
+                        AppText(
+                          txt:
+                              "Your funds has been ${model.selectedLabel}\nto your Account 1",
+                          textAlign: TextAlign.center,
+                          fontSize: AppFontSize.f14,
+                          height: 1.4,
+                          color: AppColor.c787B7F,
+                        ),
+                        SizedBox(height: ch(20)),
+                        AppText(
+                          txt:
+                              "You can now use the funds for\ntransactions, payments, or other wallet\n operations. Check your wallet summary\nfor updated balance.",
+                          textAlign: TextAlign.center,
+                          fontSize: AppFontSize.f14,
+                          height: 1.4,
+                          color: AppColor.c787B7F,
+                        ),
+                      ],
+                    ),
+                  );
                 },
               );
             },
@@ -440,7 +460,9 @@ Widget _buildBottomBody({
           _buildRow(
             context: context,
             icon: AssetUtils.coinsIcon,
-            title: model.selectedLabel=="Deposit"? "Minimum Amount: \$10":"Minimum Amount: \$3" ,
+            title: model.selectedLabel == "Deposit"
+                ? "Minimum Amount: \$3"
+                : "Minimum Amount: \$3",
           ),
           _buildRow(
             context: context,

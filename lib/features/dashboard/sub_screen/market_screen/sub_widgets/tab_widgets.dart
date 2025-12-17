@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:nommia_crypto/features/dashboard/home_screen_controller.dart';
 import 'package:nommia_crypto/features/dashboard/sub_screen/market_screen/market_screen.controller.dart';
 import 'package:nommia_crypto/helpers/app_layout.dart';
+import 'package:nommia_crypto/ui_molecules/app_text.dart';
 import 'package:nommia_crypto/utils/color_utils.dart';
 import 'package:nommia_crypto/utils/font_size.dart';
 import 'package:provider/provider.dart';
@@ -23,7 +24,7 @@ Widget marketHeader() {
 TextStyle headerStyle() => TextStyle(
   color: AppColor.cFFFFFF,
   fontWeight: FontWeight.w500,
-  fontSize: AppFontSize.f12,
+  fontSize: AppFontSize.f11,
 );
 
 Widget marketRow(BuildContext context, MarketItem item, VoidCallback onFavTap) {
@@ -50,48 +51,40 @@ Widget marketRow(BuildContext context, MarketItem item, VoidCallback onFavTap) {
                   ),
                 ),
                 SizedBox(width: cw(12)),
-                Text(
-                  item.pair,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: AppFontSize.f16,
-                    fontWeight: FontWeight.w500,
-                  ),
+                AppText(
+                  txt: item.pair,
+                  color: Colors.white,
+                  fontSize: AppFontSize.f14,
+                  fontWeight: FontWeight.w600,
                 ),
               ],
             ),
           ),
           Expanded(
             flex: 2,
-            child: Text(
-              item.bid,
-              style: TextStyle(
-                color: AppColor.cFFFFFF,
-                fontSize: AppFontSize.f12,
-                fontWeight: FontWeight.w500,
-              ),
+            child: AppText(
+              txt: item.bid,
+              color: AppColor.cFFFFFF,
+              fontSize: AppFontSize.f12,
+              fontWeight: FontWeight.w600,
             ),
           ),
           Expanded(
             flex: 2,
-            child: Text(
-              item.ask,
-
-              style: TextStyle(
-                color: AppColor.cFFFFFF,
-                fontSize: AppFontSize.f12,
-                fontWeight: FontWeight.w500,
-              ),
+            child: AppText(
+              txt: item.ask,
+              color: AppColor.cFFFFFF,
+              fontSize: AppFontSize.f12,
+              fontWeight: FontWeight.w600,
             ),
           ),
           Expanded(
             flex: 2,
-            child: Text(
-              "${item.change.toStringAsFixed(2)}%",
-              style: TextStyle(
-                color: item.change >= 0 ? Colors.green : Colors.red,
-                fontWeight: FontWeight.w600,
-              ),
+            child: AppText(
+              txt:
+                  "${item.change >= 0 ? '+' : ''}${item.change.toStringAsFixed(2)}%",
+              color: item.change >= 0 ? Colors.green : Colors.red,
+              fontWeight: FontWeight.w600,
             ),
           ),
         ],

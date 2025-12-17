@@ -5,13 +5,15 @@ import 'package:nommia_crypto/utils/asset_utils.dart';
 import 'package:nommia_crypto/utils/color_utils.dart';
 import 'package:nommia_crypto/utils/font_size.dart';
 import 'package:nommia_crypto/utils/theme/app_gradient.dart';
-import 'package:sizer/sizer.dart';
 
 void showDepositDialog(
   BuildContext context, {
   required String title,
   required Widget description,
   required VoidCallback onDone,
+  String image = AssetUtils.frameIcon,
+  FontWeight fontWeight = FontWeight.w600,
+  double? fontSize,
 }) {
   showDialog(
     context: context,
@@ -27,11 +29,7 @@ void showDepositDialog(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Image.asset(
-                  AssetUtils.frameIcon,
-                  height: ch(80),
-                  fit: BoxFit.contain,
-                ),
+                Image.asset(image, height: ch(80), fit: BoxFit.contain),
 
                 SizedBox(height: ch(18)),
 
@@ -40,8 +38,8 @@ void showDepositDialog(
                   title,
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontSize: AppFontSize.f20,
-                    fontWeight: FontWeight.w600,
+                    fontSize: fontSize ?? AppFontSize.f20,
+                    fontWeight: fontWeight,
                     height: 1.5,
                     color: AppColor.cFFFFFF,
                   ),

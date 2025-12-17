@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:nommia_crypto/features/dashboard/home_screen_controller.dart';
 import 'package:nommia_crypto/features/dashboard/sub_screen/trade/trading_controller.dart';
 import 'package:nommia_crypto/helpers/app_layout.dart';
+import 'package:nommia_crypto/ui_molecules/app_primary_button.dart';
+import 'package:nommia_crypto/ui_molecules/primary_textfield.dart';
+import 'package:nommia_crypto/utils/asset_utils.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:nommia_crypto/utils/color_utils.dart';
@@ -574,66 +578,68 @@ class TradingScreen extends StatelessWidget {
   }
 
   Widget _buildBuySellSelector(TradingController controller) {
-    return Row(
-      children: [
-        Expanded(
-          child: GestureDetector(
-            onTap: () => controller.setTradeSide(TradeSide.sell),
-            child: Container(
-              height: 50,
-              decoration: BoxDecoration(
-                color: controller.selectedSide == TradeSide.sell
-                    ? AppColor.sellRed
-                    : AppColor.primaryBackground,
-                borderRadius: BorderRadius.circular(25),
-                border: Border.all(
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColor.primaryBackground,
+        borderRadius: BorderRadius.circular(25),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: GestureDetector(
+              onTap: () => controller.setTradeSide(TradeSide.sell),
+              child: Container(
+                height: 50,
+                decoration: BoxDecoration(
                   color: controller.selectedSide == TradeSide.sell
-                      ? AppColor.sellRed
-                      : AppColor.sellRed.withOpacity(0.5),
+                      ? AppColor.sellRed.withOpacity(0.3)
+                      : AppColor.primaryBackground,
+                  borderRadius: BorderRadius.circular(25),
+                  border: Border.all(
+                    color: controller.selectedSide == TradeSide.sell
+                        ? AppColor.sellRed
+                        : AppColor.transparent,
+                  ),
                 ),
-              ),
-              alignment: Alignment.center,
-              child: AppText(
-                txt: "Sell",
-                color: controller.selectedSide == TradeSide.sell
-                    ? AppColor.white
-                    : AppColor.sellRed,
-                fontWeight: FontWeight.w400,
-                fontSize: AppFontSize.f16,
+                alignment: Alignment.center,
+                child: AppText(
+                  txt: "Sell",
+                  color: AppColor.sellRed,
+                  fontWeight: FontWeight.w500,
+                  fontSize: AppFontSize.f16,
+                ),
               ),
             ),
           ),
-        ),
-        const SizedBox(width: 16),
-        Expanded(
-          child: GestureDetector(
-            onTap: () => controller.setTradeSide(TradeSide.buy),
-            child: Container(
-              height: 50,
-              decoration: BoxDecoration(
-                color: controller.selectedSide == TradeSide.buy
-                    ? AppColor.buyGreen
-                    : AppColor.primaryBackground,
-                borderRadius: BorderRadius.circular(25),
-                border: Border.all(
+          const SizedBox(width: 16),
+          Expanded(
+            child: GestureDetector(
+              onTap: () => controller.setTradeSide(TradeSide.buy),
+              child: Container(
+                height: 50,
+                decoration: BoxDecoration(
                   color: controller.selectedSide == TradeSide.buy
-                      ? AppColor.buyGreen
-                      : AppColor.buyGreen.withOpacity(0.5),
+                      ? AppColor.buyGreen.withOpacity(0.3)
+                      : AppColor.primaryBackground,
+                  borderRadius: BorderRadius.circular(25),
+                  border: Border.all(
+                    color: controller.selectedSide == TradeSide.buy
+                        ? AppColor.buyGreen
+                        : AppColor.transparent,
+                  ),
                 ),
-              ),
-              alignment: Alignment.center,
-              child: AppText(
-                txt: "Buy",
-                color: controller.selectedSide == TradeSide.buy
-                    ? AppColor.white
-                    : AppColor.buyGreen,
-                fontWeight: FontWeight.w400,
-                fontSize: AppFontSize.f16,
+                alignment: Alignment.center,
+                child: AppText(
+                  txt: "Buy",
+                  color: AppColor.buyGreen,
+                  fontWeight: FontWeight.w400,
+                  fontSize: AppFontSize.f16,
+                ),
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -1120,66 +1126,109 @@ class TradingScreen extends StatelessWidget {
           maxChildSize: 0.9,
           expand: false,
           builder: (context, scrollController) {
-            return SingleChildScrollView(
+            return ListView(
+              shrinkWrap: true,
               controller: scrollController,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  AppText(
-                    txt: "Filter closed portion",
-                    color: AppColor.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                  const SizedBox(height: 20),
-                  AppText(txt: "From", color: AppColor.textGrey, fontSize: 14),
-                  const SizedBox(height: 10),
-                  _buildFilterOption("Last 24h", false),
-                  _buildFilterOption("Last 7 days", false),
-                  _buildFilterOption("Last 30 days", false),
-                  _buildFilterOption("Last 365 days", false),
-                  _buildFilterOption("custom range", false),
-                  const SizedBox(height: 20),
-                  const Divider(color: AppColor.divider),
-                  const SizedBox(height: 20),
-                  AppText(
-                    txt: "Symbol",
-                    color: AppColor.textGrey,
-                    fontSize: 14,
-                  ),
-                  const SizedBox(height: 10),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: AppColor.primaryBackground,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Icons.search,
-                          color: AppColor.textGrey,
-                          size: 20,
+              padding: EdgeInsets.symmetric(horizontal: cw(40), vertical: 20),
+              children: [
+                SizedBox(height: ch(20)),
+                AppText(
+                  txt: "Filter closed portion",
+                  color: AppColor.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+                const SizedBox(height: 20),
+
+                AppText(txt: "From", color: AppColor.textGrey, fontSize: 14),
+                const SizedBox(height: 10),
+                _buildFilterOption("Last 24h", false),
+                _buildFilterOption("Last 7 days", false),
+                _buildFilterOption("Last 30 days", false),
+                _buildFilterOption("Last 365 days", false),
+                _buildFilterOption("Custom range", false),
+
+                const SizedBox(height: 20),
+                const Divider(color: AppColor.divider),
+                const SizedBox(height: 20),
+
+                AppText(txt: "Symbol", color: AppColor.textGrey, fontSize: 14),
+                const SizedBox(height: 10),
+
+                primaryTextField(
+                  fillColor: AppColor.primaryBackground,
+                  hintText: "Search",
+                  prefixIcon: SvgPicture.asset(AssetUtils.searchIcon),
+                ),
+
+                // Container(
+                //   padding: const EdgeInsets.symmetric(horizontal: 12),
+                //   height: 40,
+                //   decoration: BoxDecoration(
+                //     color: AppColor.primaryBackground,
+                //     borderRadius: BorderRadius.circular(20),
+                //   ),
+                //   child: Row(
+                //     children: [
+                //       Icon(Icons.search, color: AppColor.textGrey, size: 20),
+                //       SizedBox(width: 8),
+                //       AppText(
+                //         txt: "Search",
+                //         color: AppColor.textGrey,
+                //         fontSize: 14,
+                //       ),
+                //     ],
+                //   ),
+                // ),
+                const SizedBox(height: 10),
+                _buildFilterOption("CTPCF.HK", false),
+                _buildFilterOption("PEP.US", false),
+                _buildFilterOption("MCO.N", false),
+                _buildFilterOption("TGT.N", false),
+
+                const SizedBox(height: 20),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(color: Color(0xff575B60)),
                         ),
-                        const SizedBox(width: 8),
-                        AppText(
-                          txt: "Search",
-                          color: AppColor.textGrey,
-                          fontSize: 14,
+                        onPressed: () {},
+                        child: Container(
+                          alignment: Alignment.center,
+                          height: ch(45),
+                          child: AppText(
+                            fontWeight: FontWeight.w400,
+                            txt: "Clear",
+                            color: Color(0xff575B60),
+                          ),
                         ),
-                      ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 10),
-                  _buildFilterOption("CTPCF.HK", false),
-                  _buildFilterOption("PEP.US", false),
-                  _buildFilterOption("MCO.N", false),
-                  _buildFilterOption("TGT.N", false),
-                  _buildFilterOption("custom range", false),
-                ],
-              ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                          backgroundColor: AppColor.accentYellow,
+
+                          side: const BorderSide(color: AppColor.transparent),
+                        ),
+                        onPressed: () {},
+                        child: Container(
+                          alignment: Alignment.center,
+                          height: ch(45),
+                          child: AppText(
+                            fontWeight: FontWeight.w400,
+                            txt: "Apply",
+                            color: Color.fromARGB(255, 0, 4, 8),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             );
           },
         );
@@ -1196,12 +1245,17 @@ class TradingScreen extends StatelessWidget {
             width: 20,
             height: 20,
             decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: AppColor.textGrey),
+              borderRadius: BorderRadius.circular(cw(5)),
+              shape: BoxShape.rectangle,
+              border: Border.all(color: Color(0xff787B7F)),
             ),
           ),
           const SizedBox(width: 12),
-          AppText(txt: label, color: AppColor.textGrey, fontSize: 14),
+          AppText(
+            txt: label,
+            color: AppColor.textGrey,
+            fontSize: AppFontSize.f13,
+          ),
         ],
       ),
     );

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:nommia_crypto/helpers/app_layout.dart';
+import 'package:nommia_crypto/ui_molecules/app_text.dart';
 import 'package:nommia_crypto/utils/asset_utils.dart';
 import 'package:nommia_crypto/utils/color_utils.dart';
+import 'package:nommia_crypto/utils/font_size.dart';
 
 class DropdownBottomSheet extends StatelessWidget {
   final String title;
@@ -25,6 +27,7 @@ class DropdownBottomSheet extends StatelessWidget {
     return GestureDetector(
       onTap: () => _openSheet(context),
       child: Container(
+        width: 500,
         height: height ?? ch(46),
         padding: const EdgeInsets.symmetric(horizontal: 16),
         decoration: BoxDecoration(
@@ -35,15 +38,15 @@ class DropdownBottomSheet extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                selectedValue ?? title,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: selectedValue == null
-                      ? AppColor.cFFFFFF
-                      : AppColor.cFFFFFF,
-                ),
+              AppText(
+                txt: selectedValue ?? title,
+                fontSize: AppFontSize.f14,
+                fontWeight: FontWeight.w500,
+                color: selectedValue == null
+                    ? AppColor.cFFFFFF.withOpacity(0.6)
+                    : AppColor.cFFFFFF,
               ),
+
               SvgPicture.asset(AssetUtils.downIcon),
               // const Icon(Icons.keyboard_arrow_down_rounded, size: 30),
             ],
@@ -65,7 +68,12 @@ class DropdownBottomSheet extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 20),
           children: items.map((item) {
             return ListTile(
-              title: Text(item),
+              title: AppText(
+                txt: item.toString(),
+                fontSize: AppFontSize.f14,
+                fontWeight: FontWeight.w500,
+                color: AppColor.cFFFFFF,
+              ),
               onTap: () {
                 Navigator.pop(context);
                 onSelect(item);

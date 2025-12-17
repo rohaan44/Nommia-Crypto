@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:nommia_crypto/features/dashboard/sub_screen/social/social_controller.dart';
 import 'package:nommia_crypto/helpers/app_layout.dart';
+import 'package:nommia_crypto/ui_molecules/app_primary_button.dart';
 import 'package:nommia_crypto/ui_molecules/app_text.dart';
 import 'package:nommia_crypto/ui_molecules/bottom_sheets/create_account_bottomsheet.dart';
 import 'package:nommia_crypto/ui_molecules/primary_textfield.dart';
@@ -41,7 +42,10 @@ class SocialScreen extends StatelessWidget {
                           const SizedBox(height: 24),
                           _buildSectionTitle("Pamm Accounts"),
                           const SizedBox(height: 12),
-                          _buildStrategyList(context, controller.pammAccounts),
+                          _buildStrategyListPam(
+                            context,
+                            controller.pammAccounts,
+                          ),
                           const SizedBox(height: 30),
                         ],
                       ),
@@ -230,7 +234,8 @@ class SocialScreen extends StatelessWidget {
                   child: SizedBox(
                     height: 40,
                     child: OutlinedButton(
-                      onPressed: () => _showWithdrawFundsBottomSheet(context),
+                      onPressed: () =>
+                          _showWithdrawFundsBottomSheet(context: context),
                       style: OutlinedButton.styleFrom(
                         backgroundColor: AppColor.accentYellow,
                         shape: RoundedRectangleBorder(
@@ -252,7 +257,8 @@ class SocialScreen extends StatelessWidget {
                   child: SizedBox(
                     height: 40,
                     child: OutlinedButton(
-                      onPressed: () => _showAddFundsBottomSheet(context),
+                      onPressed: () =>
+                          _showAddFundsBottomSheet(context: context),
                       style: OutlinedButton.styleFrom(
                         backgroundColor: AppColor.accentYellow,
                         shape: RoundedRectangleBorder(
@@ -328,25 +334,36 @@ class SocialScreen extends StatelessWidget {
       context: context,
       builder: (context) {
         return createAccountBottomesheet(
-          context: context,
+          sheetHeight: ch(600),
+          // context parameter removed as it is not in valid class constructor?
+          // Wait, I removed context from constructor in my write_to_file? Yes.
+          // context: context,  <-- REMOVE THIS
           isDivider: false,
           description: "Please choose your parameters.",
           heading: "Start Copying Trading Activity",
           title1: "Copy Type",
           title2: "Amount (USD)",
           hint1: "Select Copy Type",
-          hint2: "Enter Amount (USD)",
+          hint2: "\$",
           isDropDown: true,
-          primarybtnHandler: () {},
-          secondarybtnHandler: () {},
-          secondarybtnText: "Okay",
-          primarybtnText: "Cancel",
+          primarybtnHandler: () {
+            Navigator.pop(context);
+          },
+          secondarybtnHandler: () {
+            Navigator.pop(context);
+          },
+          secondarybtnText: "OK",
+          primarybtnText: "Cancel", context: context,
         );
       },
     );
   }
 
-  void _showAddFundsBottomSheet(BuildContext context) {
+  void _showAddFundsBottomSheet({
+    required BuildContext context,
+    String title = "Add Funds",
+    bool totalAllocatedFunds = true,
+  }) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -366,23 +383,24 @@ class SocialScreen extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Center(
-                child: AppText(
-                  txt: "Add Funds",
-                  color: AppColor.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                ),
+              SizedBox(height: ch(20)),
+              AppText(
+                txt: title,
+                color: AppColor.white,
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
               ),
               const SizedBox(height: 24),
               _buildLabel("Trading Account"),
               const SizedBox(height: 8),
               _buildReadOnlyField("Account Name"),
               const SizedBox(height: 16),
-              _buildLabel("Total Allocated Funds (USD)"),
-              const SizedBox(height: 8),
-              _buildReadOnlyField("\$"),
-              const SizedBox(height: 16),
+              if (totalAllocatedFunds) ...[
+                _buildLabel("Total Allocated Funds (USD)"),
+                const SizedBox(height: 8),
+                _buildReadOnlyField("\$"),
+                const SizedBox(height: 16),
+              ],
               _buildLabel("Amount (USD)"),
               const SizedBox(height: 8),
               _buildReadOnlyField("\$"),
@@ -408,21 +426,12 @@ class SocialScreen extends StatelessWidget {
                   ),
                   const SizedBox(width: 16),
                   Expanded(
-                    child: ElevatedButton(
-                      onPressed: () => Navigator.pop(context),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColor.accentYellow,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25),
-                        ),
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                      ),
-                      child: AppText(
-                        txt: "OK",
-                        color: Colors.black,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
+                    child: AppButton(
+                      height: ch(40),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      text: "OK",
                     ),
                   ),
                 ],
@@ -435,7 +444,11 @@ class SocialScreen extends StatelessWidget {
     );
   }
 
-  void _showWithdrawFundsBottomSheet(BuildContext context) {
+  void _showWithdrawFundsBottomSheet({
+    required BuildContext context,
+    String title = "Withdraw Funds",
+    bool totalAllocatedFunds = true,
+  }) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -452,27 +465,30 @@ class SocialScreen extends StatelessWidget {
             top: 20,
           ),
           child: Column(
-            mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Center(
-                child: AppText(
-                  textAlign: TextAlign.start,
-                  txt: "Withdraw Funds",
-                  color: AppColor.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                ),
+              SizedBox(height: ch(20)),
+              AppText(
+                textAlign: TextAlign.start,
+                txt: title,
+                color: AppColor.white,
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
               ),
+              const SizedBox(height: 10),
+              Divider(color: AppColor.c454F5C),
               const SizedBox(height: 24),
               _buildLabel("Trading Account"),
               const SizedBox(height: 8),
               _buildReadOnlyField("Account Name"),
               const SizedBox(height: 16),
-              _buildLabel("Total Allocated Funds (USD)"),
-              const SizedBox(height: 8),
-              _buildReadOnlyField("\$"),
-              const SizedBox(height: 16),
+              if (totalAllocatedFunds) ...[
+                _buildLabel("Total Allocated Funds (USD)"),
+                const SizedBox(height: 8),
+                _buildReadOnlyField("\$"),
+                const SizedBox(height: 16),
+              ],
               _buildLabel("Amount (USD)"),
               const SizedBox(height: 8),
               _buildReadOnlyField("\$"),
@@ -483,7 +499,7 @@ class SocialScreen extends StatelessWidget {
                     child: OutlinedButton(
                       onPressed: () => Navigator.pop(context),
                       style: OutlinedButton.styleFrom(
-                        side: const BorderSide(color: AppColor.textGrey),
+                        side: const BorderSide(color: AppColor.c575B60),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(25),
                         ),
@@ -491,27 +507,18 @@ class SocialScreen extends StatelessWidget {
                       ),
                       child: AppText(
                         txt: "Cancel",
-                        color: AppColor.textGrey,
-                        fontSize: 16,
+                        color: AppColor.c575B60,
+                        fontSize: AppFontSize.f14,
                       ),
                     ),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
-                    child: ElevatedButton(
-                      onPressed: () => Navigator.pop(context),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColor.accentYellow,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25),
-                        ),
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                      ),
-                      child: AppText(
-                        txt: "OK",
-                        color: Colors.black,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
+                    child: Expanded(
+                      child: AppButton(
+                        height: ch(40),
+                        onPressed: () {},
+                        text: "OK",
                       ),
                     ),
                   ),
@@ -526,11 +533,19 @@ class SocialScreen extends StatelessWidget {
   }
 
   Widget _buildLabel(String text) {
-    return AppText(txt: text, color: AppColor.textGrey, fontSize: 14);
+    return AppText(
+      txt: text,
+      color: AppColor.textGrey,
+      fontSize: AppFontSize.f13,
+    );
   }
 
   Widget _buildReadOnlyField(String text) {
-    return primaryTextField(hintText: text);
+    return primaryTextField(
+      textFieldHeight: ch(46),
+      fillColor: AppColor.c0C1010,
+      hintText: text,
+    );
   }
 
   //   Widget _buildInputField(String hint) {
@@ -815,6 +830,186 @@ class SocialScreen extends StatelessWidget {
           Divider(color: Colors.white12),
         ],
       ),
+    );
+  }
+
+  Widget _buildStrategyListPam(
+    BuildContext context,
+    List<SocialStrategy> strategies,
+  ) {
+    return SizedBox(
+      height: 340, // Height for detailed strategy cards
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: strategies.length,
+        itemBuilder: (context, index) {
+          return _buildStrategyCardPam(context, strategies[index]);
+        },
+      ),
+    );
+  }
+
+  Widget _buildStrategyCardPam(BuildContext context, SocialStrategy strategy) {
+    return Container(
+      width: 280,
+      margin: const EdgeInsets.only(right: 16),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColor.cardBackground,
+        borderRadius: BorderRadius.circular(20),
+        // Add a subtle gradient or border if needed to match "Premium" look
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            decoration: BoxDecoration(
+              color: strategy.isSubscribed
+                  ? Colors
+                        .red // Using standard red matching mockup
+                  : Colors.grey.withValues(alpha: 0.5),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(
+              strategy.isSubscribed ? "SUBSCRIBED" : "UNSUBSCRIBED",
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 10,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          Image.asset(AssetUtils.statsPng),
+          const SizedBox(height: 40), // Spacing for chart visual area
+          // Strategy Name
+          AppText(txt: "Strategy Name", color: AppColor.textGrey, fontSize: 12),
+          const SizedBox(height: 4),
+          AppText(
+            txt: strategy.name,
+            color: AppColor.white,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+          const SizedBox(height: 20),
+          // Stats Grid
+          Row(
+            children: [
+              _buildStatItem("ROI", strategy.roi, color: AppColor.buyGreen),
+              const Spacer(),
+              _buildStatItem("Capital", strategy.capital),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              _buildStatItem("Fee (Trader/Client)", strategy.fee),
+              const Spacer(),
+              _buildStatItemPam("Min. Deposit", strategy.minDeposit),
+            ],
+          ),
+          const Spacer(),
+          // Actions
+          if (strategy.isSubscribed)
+            Row(
+              children: [
+                Expanded(
+                  child: SizedBox(
+                    height: 40,
+                    child: OutlinedButton(
+                      onPressed: () => _showWithdrawFundsBottomSheet(
+                        context: context,
+                        title: "Withdraw Funds",
+                        totalAllocatedFunds: false,
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        backgroundColor: AppColor.accentYellow,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        side: BorderSide.none,
+                      ),
+                      child: AppText(
+                        txt: "- Funds",
+                        color: Colors.black,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: SizedBox(
+                    height: 40,
+                    child: OutlinedButton(
+                      onPressed: () => _showAddFundsBottomSheet(
+                        context: context,
+                        title: "Allocate Funds",
+                        totalAllocatedFunds: false,
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        backgroundColor: AppColor.accentYellow,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        side: BorderSide.none,
+                      ),
+                      child: AppText(
+                        txt: "+ Funds",
+                        color: Colors.black,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            )
+          else
+            SizedBox(
+              height: 40,
+              width: double.infinity,
+              child: OutlinedButton(
+                onPressed: () =>
+                    _showCopyStrategyBottomSheet(context, strategy),
+                style: OutlinedButton.styleFrom(
+                  backgroundColor: AppColor.accentYellow,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  side: BorderSide.none,
+                ),
+                child: AppText(
+                  txt: "Copy",
+                  color: Colors.black,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatItemPam(
+    String label,
+    String value, {
+    Color color = Colors.white,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        AppText(txt: label, color: AppColor.textGrey, fontSize: 10),
+        const SizedBox(height: 2),
+        AppText(
+          txt: value,
+          color: color,
+          fontSize: 14,
+          fontWeight: FontWeight.bold,
+        ),
+      ],
     );
   }
 }

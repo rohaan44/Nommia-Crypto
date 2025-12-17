@@ -45,7 +45,6 @@ class _MarketScreenState extends State<MarketScreen>
               model: controller,
               searchFieldController: TextEditingController(),
             ),
-
             /// 🔥 BODY
             body: SafeArea(
               child: Container(

@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: providersList,
       child: Sizer(
-        builder: (context, orientation, screenType) {
+        builder: (context, orientation, deviceType) {
           return MaterialApp(
             title: 'Nommia Crypto',
             theme: AppTheme.darkTheme,

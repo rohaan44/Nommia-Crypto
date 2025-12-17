@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:nommia_crypto/helpers/app_layout.dart';
 import 'package:nommia_crypto/ui_molecules/app_text.dart';
 import 'package:nommia_crypto/utils/color_utils.dart';
-import 'package:nommia_crypto/utils/asset_utils.dart';
 
 enum TradeStatus { success, failed }
 

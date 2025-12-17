@@ -60,7 +60,7 @@ class SocialController extends ChangeNotifier {
       isSubscribed: true,
     ),
     SocialStrategy(
-      name: "Delta Swing",
+      name: "Alpha FX Growth",
       roi: "+15%",
       capital: "\$12,000",
       fee: "20% / 80%",
