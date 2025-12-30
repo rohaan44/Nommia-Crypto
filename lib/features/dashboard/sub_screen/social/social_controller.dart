@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 
 class SocialController extends ChangeNotifier {
+
+
+
+  
   // --- Dummy Data for UI ---
   final List<TradeIdea> tradeIdeas = [
     TradeIdea(
@@ -89,16 +93,25 @@ class SocialController extends ChangeNotifier {
   ];
 
   // --- Funds Sheet State ---
-  String _selectedAccount = "Account Name";
   double _allocatedFunds = 5000.00;
   double _amountInput = 0.0;
 
-  String get selectedAccount => _selectedAccount;
+
   double get allocatedFunds => _allocatedFunds;
   double get amountInput => _amountInput;
 
   void setAmount(String val) {
     _amountInput = double.tryParse(val) ?? 0.0;
+    notifyListeners();
+  }
+
+   final accountList = ["Account #1", "Account #2", "Account #3", "Account #4"];
+
+  String? _selectedAccount;
+
+  String? get selectedAccount => _selectedAccount;
+  set selectedAccount(String? value) {
+    _selectedAccount = value;
     notifyListeners();
   }
 }

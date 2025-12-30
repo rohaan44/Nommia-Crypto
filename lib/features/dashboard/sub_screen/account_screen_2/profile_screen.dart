@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:nommia_crypto/features/dashboard/home_screen_controller.dart';
 import 'package:nommia_crypto/features/dashboard/sub_screen/account_screen_2/profile_controller.dart';
 import 'package:nommia_crypto/ui_molecules/app_primary_button.dart';
+import 'package:nommia_crypto/ui_molecules/custom_dropdown/custom_dropdown.dart';
 import 'package:nommia_crypto/utils/asset_utils.dart';
 import 'package:nommia_crypto/utils/color_utils.dart';
 import 'package:nommia_crypto/ui_molecules/app_text.dart';
@@ -14,51 +16,44 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (_) => ProfileController(),
-      child: Scaffold(
-        backgroundColor: AppColor.primaryBackground,
-        body: Consumer<ProfileController>(
-          builder: (context, controller, child) {
-            return SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Column(
-                  children: [
-                    const SizedBox(height: 20),
-                    _buildAccountSelector(controller),
-                    const SizedBox(height: 30),
-                    _buildAccountStats(),
-                    const SizedBox(height: 30),
-                    _buildTabs(controller),
-                    const SizedBox(height: 10),
-                    Expanded(child: _buildTradeList(controller)),
-                  ],
+      child: Consumer<ProfileController>(
+        builder: (context, controller, child) {
+          return SafeArea(
+            child: Column(
+              children: [
+                const SizedBox(height: 20),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: _buildAccountSelector(controller),
                 ),
-              ),
-            );
-          },
-        ),
+                const SizedBox(height: 30),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: _buildAccountStats(),
+                ),
+                const SizedBox(height: 30),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: _buildTabs(controller),
+                ),
+                const SizedBox(height: 10),
+                Expanded(child: _buildTradeList(controller)),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
 
   Widget _buildAccountSelector(ProfileController controller) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        color: AppColor.cardBackground,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          AppText(
-            txt: controller.selectedAccount,
-            color: AppColor.textGrey,
-            fontSize: 16,
-          ),
-          const Icon(Icons.keyboard_arrow_down, color: AppColor.white),
-        ],
-      ),
+    return DropdownBottomSheet(
+      title: "Account #1",
+      items: controller.accountList,
+      selectedValue: controller.selectedAccount,
+      onSelect: (value) {
+        controller.selectedAccount = value;
+      },
     );
   }
 
@@ -134,139 +129,140 @@ class ProfileScreen extends StatelessWidget {
   Widget _buildTradeList(ProfileController controller) {
     return ListView.builder(
       itemCount: controller.trades.length,
+      padding: EdgeInsets.all(0),
       itemBuilder: (context, index) {
         final trade = controller.trades[index];
         return GestureDetector(
           onTap: () => _showTradeDetailSheet(context, trade, controller),
           child: Container(
             margin: const EdgeInsets.only(bottom: 12),
-            padding: const EdgeInsets.all(16),
+
             decoration: BoxDecoration(
-              color: AppColor.cardBackground,
-              borderRadius: BorderRadius.circular(12),
-              border: Border(
-                bottom: BorderSide(color: AppColor.divider.withOpacity(0.1)),
-              ),
+              border: Border(bottom: BorderSide(color: AppColor.divider)),
             ),
-            child: Column(
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(6),
-                      decoration: const BoxDecoration(
-                        color: Colors.orange, // Bitcoin icon placeholder color
-                        shape: BoxShape.circle,
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: const BoxDecoration(
+                          color:
+                              Colors.orange, // Bitcoin icon placeholder color
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.currency_bitcoin,
+                          size: 16,
+                          color: Colors.white,
+                        ),
                       ),
-                      child: const Icon(
-                        Icons.currency_bitcoin,
-                        size: 16,
-                        color: Colors.white,
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                AppText(
+                                  txt: trade.symbol,
+                                  color: AppColor.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                const SizedBox(width: 8),
+                                _buildSideBadge(trade.type),
+                                const SizedBox(width: 8),
+                                const Icon(
+                                  Icons.star,
+                                  color: AppColor.accentYellow,
+                                  size: 16,
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 4),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    AppText(
+                                      txt: trade.type == "BUY"
+                                          ? "Open Time"
+                                          : "Close Time", // Example logic
+                                      color: AppColor.textGrey,
+                                      fontSize: 10,
+                                    ),
+                                    const SizedBox(height: 2),
+                                    AppText(
+                                      txt: trade.time,
+                                      color: AppColor.white,
+                                      fontSize: 12,
+                                    ),
+                                  ],
+                                ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    AppText(
+                                      txt: "Volume",
+                                      color: AppColor.textGrey,
+                                      fontSize: 10,
+                                    ),
+                                    const SizedBox(height: 2),
+                                    AppText(
+                                      txt: trade.volume.toStringAsFixed(2),
+                                      color: AppColor.white,
+                                      fontSize: 12,
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      const SizedBox(width: 12),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          Row(
-                            children: [
-                              AppText(
-                                txt: trade.symbol,
-                                color: AppColor.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              const SizedBox(width: 8),
-                              _buildSideBadge(trade.type),
-                              const SizedBox(width: 8),
-                              const Icon(
-                                Icons.star,
-                                color: AppColor.accentYellow,
-                                size: 16,
-                              ),
-                            ],
+                          AppText(
+                            txt: trade.profit.toString(),
+                            color: trade.isLoss
+                                ? AppColor.sellRed
+                                : AppColor.buyGreen,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
                           ),
                           const SizedBox(height: 4),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  AppText(
-                                    txt: trade.type == "BUY"
-                                        ? "Open Time"
-                                        : "Close Time", // Example logic
-                                    color: AppColor.textGrey,
-                                    fontSize: 10,
-                                  ),
-                                  const SizedBox(height: 2),
-                                  AppText(
-                                    txt: trade.time,
-                                    color: AppColor.white,
-                                    fontSize: 12,
-                                  ),
-                                ],
+                              AppText(
+                                txt: trade.type == "BUY"
+                                    ? "Open Price"
+                                    : "Close Price",
+                                color: AppColor.textGrey,
+                                fontSize: 10,
                               ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  AppText(
-                                    txt: "Volume",
-                                    color: AppColor.textGrey,
-                                    fontSize: 10,
-                                  ),
-                                  const SizedBox(height: 2),
-                                  AppText(
-                                    txt: trade.volume.toStringAsFixed(2),
-                                    color: AppColor.white,
-                                    fontSize: 12,
-                                  ),
-                                ],
+                              const SizedBox(height: 2),
+                              AppText(
+                                txt: trade.openPrice.toString(),
+                                color: AppColor.white,
+                                fontSize: 12,
                               ),
                             ],
                           ),
                         ],
                       ),
-                    ),
-                    const SizedBox(width: 12),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        AppText(
-                          txt: trade.profit.toString(),
-                          color: trade.isLoss
-                              ? AppColor.sellRed
-                              : AppColor.buyGreen,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        const SizedBox(height: 4),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            AppText(
-                              txt: trade.type == "BUY"
-                                  ? "Open Price"
-                                  : "Close Price",
-                              color: AppColor.textGrey,
-                              fontSize: 10,
-                            ),
-                            const SizedBox(height: 2),
-                            AppText(
-                              txt: trade.openPrice.toString(),
-                              color: AppColor.white,
-                              fontSize: 12,
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         );
@@ -380,7 +376,13 @@ class ProfileScreen extends StatelessWidget {
                             borderRadius: BorderRadius.circular(25),
                           ),
                         ),
-                        onPressed: () {}, // Modify placeholder
+                        onPressed: () {
+                          Navigator.pop(context);
+                          Provider.of<DashBoardScreenController>(
+                            context,
+                            listen: false,
+                          ).onBottomNavTap(0);
+                        }, // Modify placeholder
                         child: AppText(
                           txt: "Modify",
                           color: Colors.black,
@@ -412,7 +414,7 @@ class ProfileScreen extends StatelessWidget {
                           }
                         },
                         child: AppText(
-                          txt: isDeleteMode ? "Cancel" : "Close",
+                          txt: isDeleteMode ? "Cancel" : "Cancel",
                           color: AppColor.white,
                           fontWeight: FontWeight.bold,
                         ),

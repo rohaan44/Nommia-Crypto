@@ -21,6 +21,7 @@ class AppColor {
   static const Color accentYellow = Color(0xFFF0B90B); // CTA / Market
   static const Color sellRed = Color(0xFFE8505B);
   static const Color buyGreen = Color(0xFF0EB286);
+  static const Color cFF9214 = Color(0xFFFF9214);
 
   // Secondary / Legacy Colors (Preserved)
   static const Color background = c121717;

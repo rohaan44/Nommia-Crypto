@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 
 class ProfileController extends ChangeNotifier {
-  String _selectedAccount = "Account 1";
+  //String _selectedAccount = "Account 1";
   String _selectedTab = "Open";
+
+  
+
 
   final List<TradeItem> _trades = [
     TradeItem(
@@ -407,16 +410,15 @@ class ProfileController extends ChangeNotifier {
     ),
   ];
 
-  String get selectedAccount => _selectedAccount;
-  String get selectedTab => _selectedTab;
+ String get selectedTab => _selectedTab;
 
   List<TradeItem> get trades =>
       _trades.where((t) => t.status == _selectedTab).toList();
 
-  void setAccount(String account) {
-    _selectedAccount = account;
-    notifyListeners();
-  }
+  // void setAccount(String account) {
+  //   _selectedAccount = account;
+  //   notifyListeners();
+  // }
 
   void setTab(String tab) {
     _selectedTab = tab;
@@ -427,7 +429,18 @@ class ProfileController extends ChangeNotifier {
     _trades.remove(trade);
     notifyListeners();
   }
+
+     final accountList = ["Account #1", "Account #2", "Account #3", "Account #4"];
+
+  String? _selectedAccount;
+
+  String? get selectedAccount => _selectedAccount;
+  set selectedAccount(String? value) {
+    _selectedAccount = value;
+    notifyListeners();
+  }
 }
+
 
 class TradeItem {
   final String symbol;

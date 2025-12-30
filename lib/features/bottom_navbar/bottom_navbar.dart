@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:nommia_crypto/helpers/app_layout.dart';
+import 'package:nommia_crypto/ui_molecules/app_text.dart';
 import 'package:nommia_crypto/utils/asset_utils.dart';
 import 'package:nommia_crypto/utils/color_utils.dart';
 import 'package:sizer/sizer.dart';
@@ -54,44 +56,83 @@ class TradeBottomNavBar extends StatelessWidget {
 
           // Center Floating Button
           Positioned(
-            bottom: 4.5.h,
+            bottom: 0.2.h,
             child: GestureDetector(
               onTap: () => onTap(2),
-              child: Container(
-                padding: EdgeInsets.all(2.w),
-                decoration: BoxDecoration(
+              child: ClipPath(
+                clipper: HouseClipper(),
+                child: Container(
+                  padding: EdgeInsets.only(top: 20),
+                  width: 100,
+                  height: ch(100),
                   color: AppColor.cardDark,
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.35),
-                      blurRadius: 12,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: CircleAvatar(
-                  radius: 6.w,
-                  backgroundColor: currentIndex == 2
-                      ? AppColor.gold
-                      : AppColor.darkGrey,
-                  child: SvgPicture.asset(
-                    AssetUtils.nomaniaIcon,
-                    width: 23.sp,
-                    height: 23.sp,
-                    colorFilter: ColorFilter.mode(
-                      currentIndex == 2 ? AppColor.black : AppColor.gold,
-                      BlendMode.srcIn,
-                    ),
+                  child: Column(
+                    children: [
+                      SvgPicture.asset(
+                              AssetUtils.nomaniaIcon,
+                              width:35.sp,
+                              height: 35.sp,
+                              colorFilter: ColorFilter.mode(
+                                currentIndex == 2 ? AppColor.gold : AppColor.grey,
+                                BlendMode.srcIn,
+                              ),
+                        ),
+                        Spacer(),
+                      AppText(txt: "Home" ,
+                   fontSize: 8.5.sp,
+              fontWeight: FontWeight.w500,
+                      color: currentIndex == 2  ? AppColor.gold : AppColor.grey,),
+                      SizedBox(height: ch(20)),
+                    ],
                   ),
-                ),
-              ),
+              )
+              // GestureDetector(
+              //   onTap: () => onTap(2),
+              //   child: Column(
+              //     children: [
+              //       SizedBox(height: 20,),
+              //       Container(
+              //         padding: EdgeInsets.all(2.w),
+              //         decoration: BoxDecoration(
+              //           color: AppColor.cardDark,
+              //           shape: BoxShape.circle,
+              //           boxShadow: [
+              //             BoxShadow(
+              //               color: Colors.black.withOpacity(0.35),
+              //               blurRadius: 12,
+              //               offset: const Offset(0, 4),
+              //             ),
+              //           ],
+              //         ),
+              //         child: CircleAvatar(
+              //           radius: 6.w,
+              //           backgroundColor: currentIndex == 2
+              //               ? AppColor.gold
+              //               : AppColor.darkGrey,
+              //           child: SvgPicture.asset(
+              //             AssetUtils.nomaniaIcon,
+              //             width: 23.sp,
+              //             height: 23.sp,
+              //             colorFilter: ColorFilter.mode(
+              //               currentIndex == 2 ? AppColor.black : AppColor.gold,
+              //               BlendMode.srcIn,
+              //             ),
+              //           ),
+              //         ),
+              //       ),
+                    
+              //       AppText(txt: "Home")
+              //     ],
+              //   ),
+              // ),
+                        ),
             ),
-          ),
-        ],
+       ) ],
       ),
     );
   }
+
+
 
   Widget _item({
     required String icon,
@@ -119,7 +160,7 @@ class TradeBottomNavBar extends StatelessWidget {
             label,
             style: TextStyle(
               fontSize: 8.5.sp,
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.w500,
               color: isSelected ? AppColor.gold : AppColor.grey,
             ),
           ),
@@ -127,4 +168,22 @@ class TradeBottomNavBar extends StatelessWidget {
       ),
     );
   }
+}
+class HouseClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    final path = Path();
+
+    path.moveTo(size.width / 2, size.height * 0.02);          // roof peak
+    path.lineTo(size.width, size.height * .2);
+    path.lineTo(size.width, size.height);
+    path.lineTo(0, size.height);
+    path.lineTo(0, size.height * .2);
+    path.close();
+
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }

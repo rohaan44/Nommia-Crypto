@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nommia_crypto/helpers/app_layout.dart';
+import 'package:nommia_crypto/ui_molecules/app_text.dart';
 import 'package:nommia_crypto/utils/color_utils.dart';
 import 'package:nommia_crypto/utils/font_size.dart';
 import 'package:nommia_crypto/utils/theme/app_gradient.dart';
@@ -128,22 +129,16 @@ class AppButton extends StatelessWidget {
                       ],
 
                       if (text != null)
-                        Text(
-                          text!,
-                          style:
-                              textStyle ??
-                              TextStyle(
-                                fontFamily: "Inter",
-                                fontSize: fontSize ?? AppFontSize.f15 - 2,
-                                color: isButtonEnable
-                                    ? (textColor ?? AppColor.background)
-                                    : AppColor.cFFFFFF,
-                                fontWeight: fontWeight ?? FontWeight.w500,
-                                decoration:
-                                    textDecoration ?? TextDecoration.none,
-                                letterSpacing: 0,
-                                height: textHeight,
-                              ),
+                        AppText(
+                          txt: text!,
+                          fontSize: fontSize ?? AppFontSize.f15 - 2,
+                          color: isButtonEnable
+                              ? (textColor ?? AppColor.background)
+                              : AppColor.cFFFFFF,
+                          fontWeight: fontWeight ?? FontWeight.w500,
+                          decoration: textDecoration ?? TextDecoration.none,
+                          // letterSpacing: 0,
+                          height: textHeight,
                         ),
 
                       if (isRow && svg != null) ...[const Spacer(), svg!],

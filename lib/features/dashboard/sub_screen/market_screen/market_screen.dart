@@ -20,10 +20,14 @@ class _MarketScreenState extends State<MarketScreen>
 
   final List<String> tabs = [
     "All",
-    "Favourite",
+    "Favorite",
     "Majors",
     "Minors",
-    "Settings",
+    "Indices",
+    "Precious metals",
+    "Stocks",
+    "Crypto",
+    "Synthetic",
   ];
 
   @override
@@ -45,6 +49,7 @@ class _MarketScreenState extends State<MarketScreen>
               model: controller,
               searchFieldController: TextEditingController(),
             ),
+
             /// 🔥 BODY
             body: SafeArea(
               child: Container(
@@ -70,7 +75,12 @@ class _MarketScreenState extends State<MarketScreen>
                         controller: _tabController,
                         children: [
                           allMarketList(controller, context),
-                          favouriteMarketList(controller, context),
+                          allMarketList(controller, context),
+                          // favouriteMarketList(controller, context),
+                          allMarketList(controller, context),
+                          allMarketList(controller, context),
+                          allMarketList(controller, context),
+                          allMarketList(controller, context),
                           allMarketList(controller, context),
                           allMarketList(controller, context),
                           allMarketList(controller, context),

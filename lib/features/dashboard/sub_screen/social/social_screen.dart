@@ -4,6 +4,7 @@ import 'package:nommia_crypto/helpers/app_layout.dart';
 import 'package:nommia_crypto/ui_molecules/app_primary_button.dart';
 import 'package:nommia_crypto/ui_molecules/app_text.dart';
 import 'package:nommia_crypto/ui_molecules/bottom_sheets/create_account_bottomsheet.dart';
+import 'package:nommia_crypto/ui_molecules/custom_dropdown/custom_dropdown.dart';
 import 'package:nommia_crypto/ui_molecules/primary_textfield.dart';
 import 'package:nommia_crypto/utils/asset_utils.dart';
 import 'package:nommia_crypto/utils/color_utils.dart';
@@ -18,44 +19,46 @@ class SocialScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (_) => SocialController(),
-      child: Scaffold(
-        backgroundColor: AppColor.primaryBackground,
-        body: Consumer<SocialController>(
-          builder: (context, controller, child) {
-            return SafeArea(
-              child: Column(
-                children: [
-                  Expanded(
-                    child: SingleChildScrollView(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(height: 20),
-                          _buildSectionTitle("Trade Ideas"),
-                          const SizedBox(height: 12),
-                          _buildTradeIdeaList(controller),
-                          const SizedBox(height: 24),
-                          _buildSectionTitle("Copy Trading"),
-                          const SizedBox(height: 12),
-                          _buildStrategyList(context, controller.copyTraders),
-                          const SizedBox(height: 24),
-                          _buildSectionTitle("Pamm Accounts"),
-                          const SizedBox(height: 12),
-                          _buildStrategyListPam(
-                            context,
-                            controller.pammAccounts,
-                          ),
-                          const SizedBox(height: 30),
-                        ],
-                      ),
+      child: Consumer<SocialController>(
+        builder: (context, controller, child) {
+          return SafeArea(
+            child: Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 20),
+                        _buildSectionTitle("Trade Ideas"),
+                        const SizedBox(height: 12),
+                        _buildTradeIdeaList(controller),
+                        const SizedBox(height: 24),
+                        _buildSectionTitle("Copy Trading"),
+                        const SizedBox(height: 12),
+                        _buildStrategyList(
+                          context,
+                          controller.copyTraders,
+                          controller,
+                        ),
+                        const SizedBox(height: 24),
+                        _buildSectionTitle("Pamm Accounts"),
+                        const SizedBox(height: 12),
+                        _buildStrategyListPam(
+                          context,
+                          controller.pammAccounts,
+                          controller,
+                        ),
+                        const SizedBox(height: 30),
+                      ],
                     ),
                   ),
-                ],
-              ),
-            );
-          },
-        ),
+                ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
@@ -153,6 +156,7 @@ class SocialScreen extends StatelessWidget {
   Widget _buildStrategyList(
     BuildContext context,
     List<SocialStrategy> strategies,
+    SocialController controller,
   ) {
     return SizedBox(
       height: 340, // Height for detailed strategy cards
@@ -160,13 +164,17 @@ class SocialScreen extends StatelessWidget {
         scrollDirection: Axis.horizontal,
         itemCount: strategies.length,
         itemBuilder: (context, index) {
-          return _buildStrategyCard(context, strategies[index]);
+          return _buildStrategyCard(context, strategies[index], controller);
         },
       ),
     );
   }
 
-  Widget _buildStrategyCard(BuildContext context, SocialStrategy strategy) {
+  Widget _buildStrategyCard(
+    BuildContext context,
+    SocialStrategy strategy,
+    SocialController controller,
+  ) {
     return Container(
       width: 280,
       margin: const EdgeInsets.only(right: 16),
@@ -185,7 +193,7 @@ class SocialScreen extends StatelessWidget {
               color: strategy.isSubscribed
                   ? Colors
                         .red // Using standard red matching mockup
-                  : Colors.grey.withValues(alpha: 0.5),
+                  : Colors.grey.withOpacity(0.5),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Text(
@@ -257,8 +265,10 @@ class SocialScreen extends StatelessWidget {
                   child: SizedBox(
                     height: 40,
                     child: OutlinedButton(
-                      onPressed: () =>
-                          _showAddFundsBottomSheet(context: context),
+                      onPressed: () => _showAddFundsBottomSheet(
+                        context: context,
+                        controller: controller,
+                      ),
                       style: OutlinedButton.styleFrom(
                         backgroundColor: AppColor.accentYellow,
                         shape: RoundedRectangleBorder(
@@ -335,9 +345,6 @@ class SocialScreen extends StatelessWidget {
       builder: (context) {
         return createAccountBottomesheet(
           sheetHeight: ch(600),
-          // context parameter removed as it is not in valid class constructor?
-          // Wait, I removed context from constructor in my write_to_file? Yes.
-          // context: context,  <-- REMOVE THIS
           isDivider: false,
           description: "Please choose your parameters.",
           heading: "Start Copying Trading Activity",
@@ -353,7 +360,8 @@ class SocialScreen extends StatelessWidget {
             Navigator.pop(context);
           },
           secondarybtnText: "OK",
-          primarybtnText: "Cancel", context: context,
+          primarybtnText: "Cancel",
+          context: context,
         );
       },
     );
@@ -363,6 +371,7 @@ class SocialScreen extends StatelessWidget {
     required BuildContext context,
     String title = "Add Funds",
     bool totalAllocatedFunds = true,
+    required SocialController controller,
   }) {
     showModalBottomSheet(
       context: context,
@@ -372,73 +381,86 @@ class SocialScreen extends StatelessWidget {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) {
-        return Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-            left: 16,
-            right: 16,
-            top: 20,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: ch(20)),
-              AppText(
-                txt: title,
-                color: AppColor.white,
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
+        return Consumer<SocialController>(
+          builder: (context, controller, child) {
+            return Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+                left: 16,
+                right: 16,
+                top: 20,
               ),
-              const SizedBox(height: 24),
-              _buildLabel("Trading Account"),
-              const SizedBox(height: 8),
-              _buildReadOnlyField("Account Name"),
-              const SizedBox(height: 16),
-              if (totalAllocatedFunds) ...[
-                _buildLabel("Total Allocated Funds (USD)"),
-                const SizedBox(height: 8),
-                _buildReadOnlyField("\$"),
-                const SizedBox(height: 16),
-              ],
-              _buildLabel("Amount (USD)"),
-              const SizedBox(height: 8),
-              _buildReadOnlyField("\$"),
-              const SizedBox(height: 32),
-              Row(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: () => Navigator.pop(context),
-                      style: OutlinedButton.styleFrom(
-                        side: const BorderSide(color: AppColor.textGrey),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25),
+                  SizedBox(height: ch(20)),
+                  AppText(
+                    txt: title,
+                    color: AppColor.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  const SizedBox(height: 24),
+                  _buildLabel("Trading Account"),
+                  const SizedBox(height: 8),
+                  DropdownBottomSheet(
+                    title: "Select Account",
+                    selectedValue: controller.selectedAccount,
+                    items: controller.accountList,
+                    onSelect: (value) {
+                      controller.selectedAccount = value;
+                    },
+                  ),
+
+                  // _buildReadOnlyField("Account Name"),
+                  const SizedBox(height: 16),
+                  if (totalAllocatedFunds) ...[
+                    _buildLabel("Total Allocated Funds (USD)"),
+                    const SizedBox(height: 8),
+                    _buildReadOnlyField("\$"),
+                    const SizedBox(height: 16),
+                  ],
+                  _buildLabel("Amount (USD)"),
+                  const SizedBox(height: 8),
+                  _buildReadOnlyField("\$"),
+                  const SizedBox(height: 32),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: () => Navigator.pop(context),
+                          style: OutlinedButton.styleFrom(
+                            side: const BorderSide(color: AppColor.textGrey),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(25),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                          ),
+                          child: AppText(
+                            txt: "Cancel",
+                            color: AppColor.textGrey,
+                            fontSize: 16,
+                          ),
                         ),
-                        padding: const EdgeInsets.symmetric(vertical: 16),
                       ),
-                      child: AppText(
-                        txt: "Cancel",
-                        color: AppColor.textGrey,
-                        fontSize: 16,
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: AppButton(
+                          height: ch(40),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          text: "OK",
+                        ),
                       ),
-                    ),
+                    ],
                   ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: AppButton(
-                      height: ch(40),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      text: "OK",
-                    ),
-                  ),
+                  const SizedBox(height: 20),
                 ],
               ),
-              const SizedBox(height: 20),
-            ],
-          ),
+            );
+          },
         );
       },
     );
@@ -457,76 +479,87 @@ class SocialScreen extends StatelessWidget {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) {
-        return Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-            left: 16,
-            right: 16,
-            top: 20,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SizedBox(height: ch(20)),
-              AppText(
-                textAlign: TextAlign.start,
-                txt: title,
-                color: AppColor.white,
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
+        return Consumer<SocialController>(
+          builder: (context, controller, child) {
+            return Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+                left: 16,
+                right: 16,
+                top: 20,
               ),
-              const SizedBox(height: 10),
-              Divider(color: AppColor.c454F5C),
-              const SizedBox(height: 24),
-              _buildLabel("Trading Account"),
-              const SizedBox(height: 8),
-              _buildReadOnlyField("Account Name"),
-              const SizedBox(height: 16),
-              if (totalAllocatedFunds) ...[
-                _buildLabel("Total Allocated Funds (USD)"),
-                const SizedBox(height: 8),
-                _buildReadOnlyField("\$"),
-                const SizedBox(height: 16),
-              ],
-              _buildLabel("Amount (USD)"),
-              const SizedBox(height: 8),
-              _buildReadOnlyField("\$"),
-              const SizedBox(height: 32),
-              Row(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: () => Navigator.pop(context),
-                      style: OutlinedButton.styleFrom(
-                        side: const BorderSide(color: AppColor.c575B60),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25),
+                  SizedBox(height: ch(20)),
+                  AppText(
+                    textAlign: TextAlign.start,
+                    txt: title,
+                    color: AppColor.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  const SizedBox(height: 10),
+                  Divider(color: AppColor.c454F5C),
+                  const SizedBox(height: 24),
+                  _buildLabel("Trading Account"),
+                  const SizedBox(height: 8),
+                  DropdownBottomSheet(
+                    title: "Select Account",
+                    selectedValue: controller.selectedAccount,
+                    items: controller.accountList,
+                    onSelect: (value) {
+                      controller.selectedAccount = value;
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  if (totalAllocatedFunds) ...[
+                    _buildLabel("Total Allocated Funds (USD)"),
+                    const SizedBox(height: 8),
+                    _buildReadOnlyField("\$"),
+                    const SizedBox(height: 16),
+                  ],
+                  _buildLabel("Amount (USD)"),
+                  const SizedBox(height: 8),
+                  _buildReadOnlyField("\$"),
+                  const SizedBox(height: 32),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: () => Navigator.pop(context),
+                          style: OutlinedButton.styleFrom(
+                            side: const BorderSide(color: AppColor.c575B60),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(25),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                          ),
+                          child: AppText(
+                            txt: "Cancel",
+                            color: AppColor.c575B60,
+                            fontSize: AppFontSize.f14,
+                          ),
                         ),
-                        padding: const EdgeInsets.symmetric(vertical: 16),
                       ),
-                      child: AppText(
-                        txt: "Cancel",
-                        color: AppColor.c575B60,
-                        fontSize: AppFontSize.f14,
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Expanded(
+                          child: AppButton(
+                            height: ch(40),
+                            onPressed: () {},
+                            text: "OK",
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Expanded(
-                      child: AppButton(
-                        height: ch(40),
-                        onPressed: () {},
-                        text: "OK",
-                      ),
-                    ),
-                  ),
+                  const SizedBox(height: 20),
                 ],
               ),
-              const SizedBox(height: 20),
-            ],
-          ),
+            );
+          },
         );
       },
     );
@@ -836,6 +869,7 @@ class SocialScreen extends StatelessWidget {
   Widget _buildStrategyListPam(
     BuildContext context,
     List<SocialStrategy> strategies,
+    SocialController controller,
   ) {
     return SizedBox(
       height: 340, // Height for detailed strategy cards
@@ -843,13 +877,17 @@ class SocialScreen extends StatelessWidget {
         scrollDirection: Axis.horizontal,
         itemCount: strategies.length,
         itemBuilder: (context, index) {
-          return _buildStrategyCardPam(context, strategies[index]);
+          return _buildStrategyCardPam(context, strategies[index], controller);
         },
       ),
     );
   }
 
-  Widget _buildStrategyCardPam(BuildContext context, SocialStrategy strategy) {
+  Widget _buildStrategyCardPam(
+    BuildContext context,
+    SocialStrategy strategy,
+    SocialController controller,
+  ) {
     return Container(
       width: 280,
       margin: const EdgeInsets.only(right: 16),
@@ -868,7 +906,7 @@ class SocialScreen extends StatelessWidget {
               color: strategy.isSubscribed
                   ? Colors
                         .red // Using standard red matching mockup
-                  : Colors.grey.withValues(alpha: 0.5),
+                  : Colors.grey.withOpacity(0.5),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Text(
@@ -947,6 +985,7 @@ class SocialScreen extends StatelessWidget {
                         context: context,
                         title: "Allocate Funds",
                         totalAllocatedFunds: false,
+                        controller: controller,
                       ),
                       style: OutlinedButton.styleFrom(
                         backgroundColor: AppColor.accentYellow,

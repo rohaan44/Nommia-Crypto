@@ -1,4 +1,6 @@
+import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:nommia_crypto/features/dashboard/sub_screen/account_screen/account_screen_controller.dart';
 import 'package:nommia_crypto/helpers/app_layout.dart';
@@ -6,7 +8,10 @@ import 'package:nommia_crypto/ui_molecules/app_background_conatiner/app_backgrou
 import 'package:nommia_crypto/ui_molecules/app_body/app_body.dart';
 import 'package:nommia_crypto/ui_molecules/app_primary_button.dart';
 import 'package:nommia_crypto/ui_molecules/app_text.dart';
-import 'package:nommia_crypto/ui_molecules/bottom_sheets/create_account_bottomsheet.dart';
+import 'package:nommia_crypto/features/dashboard/sub_screen/account_screen/bank_transfer/bank_transfer_view.dart';
+import 'package:nommia_crypto/features/dashboard/sub_screen/account_screen/credit_transfer/credit_transfer_view.dart';
+
+import 'package:nommia_crypto/ui_molecules/bottom_sheets/create_account_v2_bottomsheet.dart';
 import 'package:nommia_crypto/ui_molecules/bottom_sheets/main_bottomsheet.dart';
 import 'package:nommia_crypto/ui_molecules/custom_dropdown/custom_dropdown.dart';
 import 'package:nommia_crypto/ui_molecules/dotted_divider/dotted_divider.dart';
@@ -47,10 +52,10 @@ Widget _buildBody({
           Expanded(
             child: DropdownBottomSheet(
               title: "Account 1",
-              selectedValue: model.selectedCountry,
+              selectedValue: model.selectedAccount,
               items: model.accountList,
               onSelect: (value) {
-                model.selectedCountry = value;
+                model.selectedAccount = value;
               },
             ),
           ),
@@ -60,12 +65,13 @@ Widget _buildBody({
             onTap: () {
               mainBottomsheet(
                 context: context,
-                modalContent: createAccountBottomesheet(
+                modalContent: createAccountBottomesheetV2(
+                  isDivider: true,
                   context: context,
-                  heading: "Create New Account",
+                  heading: "Create Account",
                   title1: "Name",
-                  hint1: "Account Name",
                   title2: "Currency",
+                  hint1: "Account Name",
                   hint2: "Select Currency",
                   title3: "Account Type",
                   hint3: "Select Account Type",
@@ -273,13 +279,11 @@ Widget _buildBottomBody({
         SizedBox(height: ch(27)),
       ],
 
-      if (model.selectedLabel == "Deposit" ||
-          model.selectedLabel == "Withdraw" ||
-          model.selectedLabel == "Transfer") ...[
+      if (model.selectedLabel == "Deposit") ...[
         if (model.isFiat == true) ...[
           // Fiat Methods
           AppText(
-            txt: "Fiat ${model.selectedLabel ?? "Deposit"} Methods",
+            txt: "Fiat Deposit Methods",
             fontSize: AppFontSize.f14,
 
             color: AppColor.cFFFFFF,
@@ -291,7 +295,12 @@ Widget _buildBottomBody({
 
           InkWell(
             onTap: () {
-              // Handle Card selection
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const CreditTransferView(),
+                ),
+              );
             },
             child: Container(
               height: ch(60),
@@ -322,7 +331,7 @@ Widget _buildBottomBody({
           SizedBox(height: ch(12)),
           InkWell(
             onTap: () {
-              // Handle Bank selection
+              _showDepositFundsBottomSheet(context: context, controller: model);
             },
             child: Container(
               height: ch(60),
@@ -353,36 +362,533 @@ Widget _buildBottomBody({
           ),
         ] else ...[
           // Crypto Methods
+          // DropdownBottomSheet(
+          //   title: "Select Wallet",
+          //   selectedValue: model.selectedWallet,
+          //   items: model.accountList,
+          //   onSelect: (value) {
+          //     model.selectedWallet = value;
+          //   },
+          // ),
+          AppText(
+            txt: "Select Crypto",
+            color: AppColor.cFFFFFF.withOpacity(0.5),
+          ),
+          SizedBox(height: ch(8)),
           DropdownBottomSheet(
-            title: "Select Wallet",
-            selectedValue: model.selectedWallet,
-            items: model.accountList,
+            title: "Select Crypto",
+            selectedValue: model.selectedCrypto,
+            items: model.cryptoList,
             onSelect: (value) {
-              model.selectedWallet = value;
+              model.selectedCrypto = value;
             },
           ),
 
           SizedBox(height: ch(16)),
-          DropdownBottomSheet(
-            title: "Select Network",
-            selectedValue: model.selectedNetwork,
-            items: model.accountList,
-            onSelect: (value) {
-              model.selectedNetwork = value;
-            },
+          // if (model.selectedLabel == "Transfer") ...[
+          //   DropdownBottomSheet(
+          //     title: "Select Currency",
+          //     selectedValue: model.selectedNetwork,
+          //     items: model.accountList,
+          //     onSelect: (value) {
+          //       model.selectedNetwork = value;
+          //     },
+          //   ),
+          // ] else
+          // DropdownBottomSheet(
+          //   title: "Select Network",
+          //   selectedValue: model.selectedNetwork,
+          //   items: model.accountList,
+          //   onSelect: (value) {
+          //     model.selectedNetwork = value;
+          //   },
+          // ),
+          // SizedBox(height: ch(16)),
+
+          // if (model.selectedLabel == "Deposit") ...[
+          // DropdownBottomSheet(
+          //   title: "Select Currency",
+          //   selectedValue: model.selectedCurrency,
+          //   items: model.accountList,
+          //   onSelect: (value) {
+          //     model.selectedCurrency = value;
+          //   },
+          // ),
+          // SizedBox(height: ch(16)),
+          //  ],
+          AppText(
+            txt: "Amount (USD)",
+            color: AppColor.cFFFFFF.withOpacity(0.5),
           ),
-
-          SizedBox(height: ch(16)),
-
+          SizedBox(height: ch(8)),
           primaryTextField(
-            textFieldHeight: ch(100),
-            hintText: "hintText",
+            keyboardType: TextInputType.number,
+            isBorderColor: false,
+            textFieldHeight: ch(48),
+            fillColor: AppColor.c0C1010,
+            hintText: "\$",
+            borderColor: AppColor.transparent,
             border: InputBorder.none,
           ),
           SizedBox(height: ch(16)),
 
-          primaryTextField(hintText: "Amount", border: InputBorder.none),
+          AppText(
+            txt: "Wallet Address",
+            color: AppColor.cFFFFFF.withOpacity(0.5),
+          ),
+          SizedBox(height: ch(8)),
+          TextFormField(
+            controller: model.walletController,
+            cursorColor: AppColor.red,
+            maxLines: 4,
+            style: TextStyle(
+              color: AppColor.cFFFFFF, // input text color
+              fontSize: AppFontSize.f14,
+              fontWeight: FontWeight.w400,
+            ),
+            decoration: InputDecoration(
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(cw(14)),
+                borderSide: BorderSide(color: AppColor.transparent),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(cw(14)),
+                borderSide: BorderSide(color: AppColor.transparent),
+              ),
+              fillColor: AppColor.c0C1010,
+              hintText: "Wallet Address",
+              hintStyle: TextStyle(
+                color: AppColor.cFFFFFF.withOpacity(0.5),
+                fontSize: AppFontSize.f14,
+                fontWeight: FontWeight.w400,
+              ),
+              border: InputBorder.none,
+            ),
+          ),
+
           SizedBox(height: ch(16)),
+          AppButton(
+            onPressed: () {
+              showDepositDialog(
+                isDeposit: true,
+                fontSize: AppFontSize.f18,
+                context,
+                image: AssetUtils.qrCode,
+                title:
+                    "Your ${model.selectedLabel!.toLowerCase()} request is being processed",
+                fontWeight: FontWeight.w500,
+
+                description: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: cw(20)),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Wallet Address
+                      AppText(
+                        txt: "Wallet Address",
+                        fontSize: AppFontSize.f14,
+                        fontWeight: FontWeight.w400,
+                        color: AppColor.cFFFFFF,
+                      ),
+                      SizedBox(height: ch(8)),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: AppText(
+                              txt: "TYfDPybMszAx4mSGfNUvAbNE4Y\nSM8NJ4HR",
+                              fontSize: AppFontSize.f14,
+                              fontWeight: FontWeight.w400,
+                              color: AppColor.cFFFFFF.withOpacity(0.8),
+                              height: 1.4,
+                            ),
+                          ),
+                          Icon(Icons.copy, color: AppColor.cFFFFFF, size: 20),
+                        ],
+                      ),
+                      SizedBox(height: ch(16)),
+
+                      // Network
+                      AppText(
+                        txt: "Network",
+                        fontSize: AppFontSize.f14,
+                        fontWeight: FontWeight.w400,
+                        color: AppColor.cFFFFFF,
+                      ),
+                      SizedBox(height: ch(4)),
+                      AppText(
+                        txt: "USDT",
+                        fontSize: AppFontSize.f14,
+                        fontWeight: FontWeight.w400,
+                        color: AppColor.cFFFFFF.withOpacity(0.8),
+                      ),
+                      SizedBox(height: ch(16)),
+
+                      // Amount
+                      AppText(
+                        txt: "Amount",
+                        fontSize: AppFontSize.f14,
+                        fontWeight: FontWeight.w400,
+                        color: AppColor.cFFFFFF,
+                      ),
+                      SizedBox(height: ch(4)),
+                      AppText(
+                        txt: "10 USDT",
+                        fontSize: AppFontSize.f14,
+                        fontWeight: FontWeight.w400,
+                        color: AppColor.cFFFFFF.withOpacity(0.8),
+                      ),
+                      SizedBox(height: ch(16)),
+
+                      // Status
+                      AppText(
+                        txt: "Status",
+                        fontSize: AppFontSize.f14,
+                        fontWeight: FontWeight.w400,
+                        color: AppColor.cFFFFFF,
+                      ),
+                      SizedBox(height: ch(4)),
+                      Row(
+                        children: [
+                          SvgPicture.asset(
+                            AssetUtils.pending,
+                            height: ch(16),
+                            width: cw(16),
+                          ),
+                          SizedBox(width: cw(8)),
+                          AppText(
+                            txt: "Pending",
+                            fontSize: AppFontSize.f14,
+                            fontWeight: FontWeight.w400,
+                            color: AppColor.cFF9214,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                onDone: () {
+                  showDepositDialog(
+                    onDone: () {
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                    },
+                    context,
+                    title: "${model.selectedLabel} Successfull",
+                    description: Column(
+                      children: [
+                        AppText(
+                          txt:
+                              "Your funds has been ${model.selectedLabel}\nto your Account 1",
+                          textAlign: TextAlign.center,
+                          fontSize: AppFontSize.f14,
+                          height: 1.4,
+                          color: AppColor.c787B7F,
+                        ),
+                        SizedBox(height: ch(20)),
+                        AppText(
+                          txt:
+                              "You can now use the funds for\ntransactions, payments, or other wallet\n operations. Check your wallet summary\nfor updated balance.",
+                          textAlign: TextAlign.center,
+                          fontSize: AppFontSize.f14,
+                          height: 1.4,
+                          color: AppColor.c787B7F,
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              );
+            },
+            isButtonEnable: true,
+            isBorder: false,
+            text: model.selectedLabel == "Deposit"
+                ? "Deposit"
+                : model.selectedLabel == "Withdraw"
+                ? "Withdraw"
+                : "Transfer",
+          ),
+          SizedBox(height: ch(16)),
+
+          antiMoneyText(context: context, model: model),
+
+          SizedBox(height: ch(16)),
+
+          DottedDivider(
+            color: AppColor.fieldBg,
+            dashWidth: cw(6),
+            dashSpace: cw(5),
+            thickness: 1,
+          ),
+          SizedBox(height: ch(16)),
+
+          _buildRow(
+            context: context,
+            icon: AssetUtils.coinsIcon,
+            title: model.selectedLabel == "Deposit"
+                ? "Minimum Amount: \$3"
+                : "Minimum Amount: \$3",
+          ),
+          _buildRow(
+            context: context,
+            icon: AssetUtils.clockIcon,
+            title:
+                "Processing time: Up to 2 hours\nThe processing time may be extended due to\nvarious reasons",
+          ),
+          _buildRow(
+            context: context,
+            icon: AssetUtils.infoIcon,
+            title: "Additional info.",
+          ),
+        ],
+      ],
+
+      if (model.selectedLabel == "Withdraw") ...[
+        if (model.isFiat == true) ...[
+          AppText(
+            txt: "Account Holder Name",
+            color: AppColor.cFFFFFF.withOpacity(0.5),
+          ),
+          SizedBox(height: ch(8)),
+          primaryTextField(
+            isBorderColor: false,
+            textFieldHeight: ch(48),
+            fillColor: AppColor.c0C1010,
+            hintText: "Holder Name",
+            border: InputBorder.none,
+          ),
+          // SizedBox(height: ch(16)),
+          // primaryTextField(
+          //   isBorderColor: false,
+          //   textFieldHeight: ch(48),
+          //   fillColor: AppColor.c0C1010,
+          //   hintText: "Account Number",
+          //   border: InputBorder.none,
+          // ),
+          SizedBox(height: ch(16)),
+          AppText(txt: "Bank Name", color: AppColor.cFFFFFF.withOpacity(0.5)),
+          SizedBox(height: ch(8)),
+          primaryTextField(
+            isBorderColor: false,
+            textFieldHeight: ch(48),
+            fillColor: AppColor.c0C1010,
+            hintText: "Bank",
+            border: InputBorder.none,
+          ),
+          SizedBox(height: ch(16)),
+          AppText(
+            txt: "Bank Country",
+            color: AppColor.cFFFFFF.withOpacity(0.5),
+          ),
+          SizedBox(height: ch(8)),
+          DropdownBottomSheet(
+            title: "Bank Country",
+            items: model.countryList,
+            onSelect: (v) {
+              model.selectedCountry = v;
+            },
+            selectedValue: model.selectedCountry,
+          ),
+
+          SizedBox(height: ch(16)),
+          AppText(
+            txt: "Account IBAN Number",
+            color: AppColor.cFFFFFF.withOpacity(0.5),
+          ),
+          SizedBox(height: ch(8)),
+          primaryTextField(
+            isBorderColor: false,
+            textFieldHeight: ch(48),
+            fillColor: AppColor.c0C1010,
+            hintText: "0000",
+            border: InputBorder.none,
+          ),
+          SizedBox(height: ch(16)),
+          AppText(txt: "BIC", color: AppColor.cFFFFFF.withOpacity(0.5)),
+          SizedBox(height: ch(8)),
+          primaryTextField(
+            isBorderColor: false,
+            textFieldHeight: ch(48),
+            fillColor: AppColor.c0C1010,
+            hintText: "0000",
+            border: InputBorder.none,
+          ),
+          SizedBox(height: ch(70)),
+          AppButton(
+            borderColor: AppColor.transparent,
+            onPressed: () {
+              model.selectedLabel = "Withdraw";
+              log(model.selectedLabel!);
+              showDepositDialog(
+                fontSize: AppFontSize.f18,
+                context,
+                image: AssetUtils.rocketIcon,
+                title:
+                    "Your ${model.selectedLabel!.toLowerCase()} request is being processed",
+                fontWeight: FontWeight.w500,
+
+                description: AppText(
+                  txt:
+                      "Our team is verifying your transfer.\nYou will be notified once the funds are\nadded to your Nommia wallet.",
+                  textAlign: TextAlign.center,
+                  fontSize: AppFontSize.f13,
+                  height: 1.4,
+                  color: AppColor.c787B7F,
+                ),
+
+                onDone: () {
+                  showDepositDialog(
+                    onDone: () {
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                    },
+                    context,
+                    title: "${model.selectedLabel} Successfull",
+                    description: Column(
+                      children: [
+                        AppText(
+                          txt:
+                              "Your funds has been ${model.selectedLabel}\nto your Account 1",
+                          textAlign: TextAlign.center,
+                          fontSize: AppFontSize.f14,
+                          height: 1.4,
+                          color: AppColor.c787B7F,
+                        ),
+                        SizedBox(height: ch(20)),
+                        AppText(
+                          txt:
+                              "You can now use the funds for\ntransactions, payments, or other wallet\n operations. Check your wallet summary\nfor updated balance.",
+                          textAlign: TextAlign.center,
+                          fontSize: AppFontSize.f14,
+                          height: 1.4,
+                          color: AppColor.c787B7F,
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              );
+            },
+            text: "Withdraw",
+          ),
+          SizedBox(height: ch(16)),
+
+          antiMoneyText(context: context, model: model),
+
+          SizedBox(height: ch(16)),
+
+          DottedDivider(
+            color: AppColor.fieldBg,
+            dashWidth: cw(6),
+            dashSpace: cw(5),
+            thickness: 1,
+          ),
+          SizedBox(height: ch(16)),
+
+          _buildRow(
+            context: context,
+            icon: AssetUtils.coinsIcon,
+            title: model.selectedLabel == "Deposit"
+                ? "Minimum Amount: \$3"
+                : "Minimum Amount: \$3",
+          ),
+          _buildRow(
+            context: context,
+            icon: AssetUtils.clockIcon,
+            title:
+                "Processing time: Up to 2 hours\nThe processing time may be extended due to\nvarious reasons",
+          ),
+          _buildRow(
+            context: context,
+            icon: AssetUtils.infoIcon,
+            title: "Additional info.",
+          ),
+        ] else ...[
+          // Crypto Methods
+          AppText(
+            txt: "Select Crypto",
+            color: AppColor.cFFFFFF.withOpacity(0.5),
+          ),
+          SizedBox(height: ch(8)),
+          DropdownBottomSheet(
+            title: "Select Crypto",
+            selectedValue: model.selectedCrypto,
+            items: model.cryptoList,
+            onSelect: (value) {
+              model.selectedCrypto = value;
+            },
+          ),
+
+          // SizedBox(height: ch(16)),
+
+          // DropdownBottomSheet(
+          //   title: "Select Currency",
+          //   selectedValue: model.selectedWithdrawCurrency,
+          //   items: model.accountList,
+          //   onSelect: (value) {
+          //     model.selectedWithdrawCurrency = value;
+          //   },
+          // ),
+          SizedBox(height: ch(16)),
+          // DropdownBottomSheet(
+          //   title: "Select Network",
+          //   selectedValue: model.selectedNetwork,
+          //   items: model.accountList,
+          //   onSelect: (value) {
+          //     model.selectedNetwork = value;
+          //   },
+          // ),
+          AppText(
+            txt: "Amount (USD)",
+            color: AppColor.cFFFFFF.withOpacity(0.5),
+          ),
+          SizedBox(height: ch(8)),
+          primaryTextField(
+            isBorderColor: false,
+            textFieldHeight: ch(48),
+            fillColor: AppColor.c0C1010,
+            hintText: "\$",
+            borderColor: AppColor.transparent,
+            border: InputBorder.none,
+          ),
+
+          SizedBox(height: ch(16)),
+          AppText(
+            txt: "Wallet Address",
+            color: AppColor.cFFFFFF.withOpacity(0.5),
+          ),
+          SizedBox(height: ch(8)),
+          TextFormField(
+            controller: model.walletController,
+            cursorColor: AppColor.red,
+            maxLines: 4,
+            style: TextStyle(
+              color: AppColor.cFFFFFF, // input text color
+              fontSize: AppFontSize.f14,
+              fontWeight: FontWeight.w400,
+            ),
+            decoration: InputDecoration(
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(cw(14)),
+                borderSide: BorderSide(color: AppColor.transparent),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(cw(14)),
+                borderSide: BorderSide(color: AppColor.transparent),
+              ),
+              fillColor: AppColor.c0C1010,
+              hintText: "Wallet Address",
+              hintStyle: TextStyle(
+                color: AppColor.cFFFFFF.withOpacity(0.5),
+                fontSize: AppFontSize.f14,
+                fontWeight: FontWeight.w400,
+              ),
+              border: InputBorder.none,
+            ),
+          ),
+
+          SizedBox(height: ch(16)),
+
           AppButton(
             onPressed: () {
               showDepositDialog(
@@ -476,6 +982,140 @@ Widget _buildBottomBody({
             title: "Additional info.",
           ),
         ],
+      ],
+
+      if (model.selectedLabel == "Transfer") ...[
+        // DropdownBottomSheet(
+        //   title: "Select Wallet",
+        //   selectedValue: model.selectedWallet,
+        //   items: model.accountList,
+        //   onSelect: (value) {
+        //     model.selectedWallet = value;
+        //   },
+        // ),
+        AppText(
+          txt: "Select Account",
+          color: AppColor.cFFFFFF.withOpacity(0.5),
+        ),
+        SizedBox(height: ch(8)),
+
+        // SizedBox(height: ch(16)),
+        DropdownBottomSheet(
+          title: "Select Account",
+          selectedValue: model.selectedAccount,
+          items: model.accountList,
+          onSelect: (value) {
+            model.selectedAccount = value;
+          },
+        ),
+        // SizedBox(height: ch(16)),
+        // DropdownBottomSheet(
+        //   title: "Select Currency",
+        //   selectedValue: model.selectedNetwork,
+        //   items: model.accountList,
+        //   onSelect: (value) {
+        //     model.selectedNetwork = value;
+        //   },
+        // ),
+        SizedBox(height: ch(16)),
+        AppText(txt: "Amount (USD)", color: AppColor.cFFFFFF.withOpacity(0.5)),
+        SizedBox(height: ch(8)),
+        primaryTextField(
+          isBorderColor: false,
+          textFieldHeight: ch(48),
+          fillColor: AppColor.c0C1010,
+          hintText: "\$",
+          borderColor: AppColor.transparent,
+          border: InputBorder.none,
+        ),
+        SizedBox(height: ch(20)),
+        AppButton(
+          borderColor: AppColor.transparent,
+          onPressed: () {
+            showDepositDialog(
+              fontSize: AppFontSize.f18,
+              context,
+              image: AssetUtils.rocketIcon,
+              title:
+                  "Your ${model.selectedLabel!.toLowerCase()} request is being processed",
+              fontWeight: FontWeight.w500,
+
+              description: AppText(
+                txt:
+                    "Our team is verifying your transfer.\nYou will be notified once the funds are\nadded to your Nommia wallet.",
+                textAlign: TextAlign.center,
+                fontSize: AppFontSize.f13,
+                height: 1.4,
+                color: AppColor.c787B7F,
+              ),
+
+              onDone: () {
+                showDepositDialog(
+                  onDone: () {
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                  },
+                  context,
+                  title: "${model.selectedLabel} Successfull",
+                  description: Column(
+                    children: [
+                      AppText(
+                        txt:
+                            "Your funds has been ${model.selectedLabel}\nto your Account 1",
+                        textAlign: TextAlign.center,
+                        fontSize: AppFontSize.f14,
+                        height: 1.4,
+                        color: AppColor.c787B7F,
+                      ),
+                      SizedBox(height: ch(20)),
+                      AppText(
+                        txt:
+                            "You can now use the funds for\ntransactions, payments, or other wallet\n operations. Check your wallet summary\nfor updated balance.",
+                        textAlign: TextAlign.center,
+                        fontSize: AppFontSize.f14,
+                        height: 1.4,
+                        color: AppColor.c787B7F,
+                      ),
+                    ],
+                  ),
+                );
+              },
+            );
+          },
+          text: "Transfer",
+        ),
+        SizedBox(height: ch(16)),
+
+        antiMoneyText(context: context, model: model),
+
+        SizedBox(height: ch(16)),
+
+        DottedDivider(
+          color: AppColor.fieldBg,
+          dashWidth: cw(6),
+          dashSpace: cw(5),
+          thickness: 1,
+        ),
+        SizedBox(height: ch(16)),
+
+        _buildRow(
+          context: context,
+          icon: AssetUtils.coinsIcon,
+          title: model.selectedLabel == "Deposit"
+              ? "Minimum Amount: \$3"
+              : "Minimum Amount: \$3",
+        ),
+        _buildRow(
+          context: context,
+          icon: AssetUtils.clockIcon,
+          title:
+              "Processing time: Up to 2 hours\nThe processing time may be extended due to\nvarious reasons",
+        ),
+        _buildRow(
+          context: context,
+          icon: AssetUtils.infoIcon,
+          title: "Additional info.",
+        ),
       ],
     ],
   );
@@ -628,5 +1268,125 @@ Widget _buildRow({
       ),
       SizedBox(height: ch(16)),
     ],
+  );
+}
+
+void _showDepositFundsBottomSheet({
+  required BuildContext context,
+  String title = "Deposit Funds",
+  required AccountScreenController controller,
+}) {
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: const Color(0xff1E2026),
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    ),
+    builder: (context) {
+      return Consumer<AccountScreenController>(
+        builder: (context, controller, child) {
+          return Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+              left: 16,
+              right: 16,
+              top: 20,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: ch(20)),
+                AppText(
+                  txt: title,
+                  color: AppColor.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                ),
+                const SizedBox(height: 24),
+                _buildLabel("Currency"),
+                const SizedBox(height: 8),
+                DropdownBottomSheet(
+                  title: "Select Currency",
+                  selectedValue: controller.selectedCurrency,
+                  items: controller.currencyList,
+                  onSelect: (value) {
+                    controller.selectedCurrency = value;
+                  },
+                ),
+                const SizedBox(height: 16),
+                _buildLabel("Amount (USD)"),
+                const SizedBox(height: 8),
+                _buildReadOnlyField(
+                  controller.selectedCurrency == "€ (EUR)"
+                      ? "€"
+                      : controller.selectedCurrency == "£ (GBP)"
+                      ? "£"
+                      : "\$",
+                ),
+                SizedBox(height: ch(32)),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.pop(context),
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(color: AppColor.textGrey),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(25),
+                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                        ),
+                        child: AppText(
+                          txt: "Cancel",
+                          color: AppColor.textGrey,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: AppButton(
+                        height: ch(40),
+                        onPressed: () {
+                          Navigator.pop(context);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const BankTransferView(),
+                            ),
+                          );
+                        },
+                        text: "OK",
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+              ],
+            ),
+          );
+        },
+      );
+    },
+  );
+}
+
+Widget _buildLabel(String text) {
+  return AppText(
+    txt: text,
+    color: AppColor.textGrey,
+    fontSize: AppFontSize.f13,
+  );
+}
+
+Widget _buildReadOnlyField(String text) {
+  return primaryTextField(
+    keyboardType: TextInputType.number,
+    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+    textFieldHeight: ch(46),
+    fillColor: AppColor.c0C1010,
+    hintText: text,
   );
 }

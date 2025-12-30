@@ -23,7 +23,7 @@ class DashBoardScreen extends StatelessWidget {
     return Consumer<DashBoardScreenController>(
       builder: (context, model, child) {
         return Scaffold(
-          // backgroundColor: AppColor.accentYellow,
+           backgroundColor: AppColor.c121717,
           appBar: model.selectedIndex == 1
               ? PreferredSize(
                   preferredSize: Size.fromHeight(ch(0)),

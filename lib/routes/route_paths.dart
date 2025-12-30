@@ -5,4 +5,6 @@ class RoutePaths {
   static const String signUp = '/signUp';
   static const String forgetPassword = '/forgetPassword';
   static const String marketScreen = '/MarketScreen';
+  static const String bankTransfer = '/bankTransfer';
+  static const String cardTransfer = '/cardTransfer';
 }

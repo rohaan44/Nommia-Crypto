@@ -24,6 +24,7 @@ Widget createAccountBottomesheet({
   VoidCallback? secondarybtnHandler,
   bool isDivider = true,
   bool isDropDown = false,
+  List<String>? dropdownOptions,
 }) {
   return CreateAccountBottomSheet(
     sheetHeight: sheetHeight,
@@ -41,6 +42,7 @@ Widget createAccountBottomesheet({
     secondarybtnHandler: secondarybtnHandler,
     isDivider: isDivider,
     isDropDown: isDropDown,
+    dropdownOptions: dropdownOptions,
   );
 }
 
@@ -60,6 +62,7 @@ class CreateAccountBottomSheet extends StatefulWidget {
   final VoidCallback? secondarybtnHandler;
   final bool isDivider;
   final bool isDropDown;
+  final List<String>? dropdownOptions;
 
   const CreateAccountBottomSheet({
     super.key,
@@ -78,6 +81,7 @@ class CreateAccountBottomSheet extends StatefulWidget {
     this.secondarybtnHandler,
     this.isDivider = true,
     this.isDropDown = false,
+    this.dropdownOptions,
   });
 
   @override
@@ -97,7 +101,6 @@ class _CreateAccountBottomSheetState extends State<CreateAccountBottomSheet>
   late final TextEditingController _otherController;
   late final TextEditingController
   _input1Controller; // For title1 input if not dropdown
-
   late final TextEditingController _equityController; // For Equity input
 
   @override
@@ -108,6 +111,16 @@ class _CreateAccountBottomSheetState extends State<CreateAccountBottomSheet>
     _otherController = TextEditingController();
     _input1Controller = TextEditingController();
     _equityController = TextEditingController();
+
+    // Initialize selectedValue based on options or default
+    final options =
+        widget.dropdownOptions ?? ['Equity', 'Percent', 'Lot Ratio'];
+    // Prefer user's attempted default if it exists in options, otherwise first option
+    if (options.contains("Equity")) {
+      selectedValue = "Equity";
+    } else {
+      selectedValue = options.first;
+    }
   }
 
   @override
@@ -147,6 +160,9 @@ class _CreateAccountBottomSheetState extends State<CreateAccountBottomSheet>
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    final options =
+        widget.dropdownOptions ?? ['Equity', 'Percent', 'Lot Ratio'];
+
     // Calculate height dynamically
     double calculatedHeight = selectedValue == 'Percent'
         ? ch(605)
@@ -242,17 +258,15 @@ class _CreateAccountBottomSheetState extends State<CreateAccountBottomSheet>
                               value: selectedValue,
                               dropdownColor: AppColor.c0C1010,
                               icon: SizedBox.shrink(),
-                              items: <String>['Equity', 'Percent', 'Lot Ratio']
-                                  .map((String value) {
-                                    return DropdownMenuItem<String>(
-                                      value: value,
-                                      child: AppText(
-                                        txt: value,
-                                        color: AppColor.white,
-                                      ),
-                                    );
-                                  })
-                                  .toList(),
+                              items: options.map((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: AppText(
+                                    txt: value,
+                                    color: AppColor.white,
+                                  ),
+                                );
+                              }).toList(),
                               onChanged: (String? newValue) {
                                 if (newValue != null) {
                                   setState(() {

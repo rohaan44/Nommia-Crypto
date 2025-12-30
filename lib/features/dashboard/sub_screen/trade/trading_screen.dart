@@ -22,28 +22,25 @@ class TradingScreen extends StatelessWidget {
     final model = Provider.of<DashBoardScreenController>(context);
 
     return ChangeNotifierProvider(
-      create: (_) => TradingController(),
-      child: Scaffold(
-        backgroundColor: AppColor.primaryBackground,
-        body: Column(
-          children: [
-            //_buildHeader(context),
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    SizedBox(
-                      height: 450,
-                      child: _buildChartSection(context, model),
-                    ),
-                    _buildOrderControls(),
-                  ],
-                ),
+      create: (controller) => TradingController(),
+      child: Column(
+        children: [
+          //_buildHeader(context),
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: 450,
+                    child: _buildChartSection(context, model),
+                  ),
+                  _buildOrderControls(),
+                ],
               ),
             ),
-            // _buildBottomNav(),
-          ],
-        ),
+          ),
+          // _buildBottomNav(),
+        ],
       ),
     );
   }
@@ -99,7 +96,6 @@ class TradingScreen extends StatelessWidget {
         _buildTimeframeToolbar(),
         Expanded(
           child: Container(
-            color: AppColor.chartBackground,
             child: Row(
               children: [
                 _buildChartSidebar(),
@@ -115,7 +111,6 @@ class TradingScreen extends StatelessWidget {
 
   Widget _buildTradeInfoBar(BuildContext context, model) {
     return Container(
-      color: AppColor.primaryBackground,
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -141,12 +136,7 @@ class TradingScreen extends StatelessWidget {
           ),
           _tradesInfo(
             onTap: () {
-              model.onBottomNavTap(4);
-              // Navigator.pushNamedAndRemoveUntil(
-              //   context,
-              //   RoutePaths.marketScreen,
-              //   (route) => false,
-              // );
+              model.onBottomNavTap(2);
             },
           ),
           Row(
@@ -157,21 +147,44 @@ class TradingScreen extends StatelessWidget {
                 fontWeight: FontWeight.bold,
                 fontSize: AppFontSize.f14,
               ),
-              const SizedBox(width: 4),
-              AppText(
-                txt: "P&L",
-                color: AppColor.textGrey,
-                fontSize: AppFontSize.f12,
-              ),
-              const SizedBox(width: 8),
+              SizedBox(width: cw(10)),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                color: AppColor.accentYellow,
-                child: AppText(
-                  txt: "LIVE",
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 10,
+                width: cw(60),
+                height: ch(15),
+                padding: EdgeInsets.only(left: cw(8)),
+                decoration: BoxDecoration(
+                  color: AppColor.buyGreen.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(cw(12)),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    AppText(
+                      txt: "P&L",
+                      color: AppColor.white,
+                      fontSize: AppFontSize.f12,
+                    ),
+
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 4,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.yellow,
+                        borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(cw(12)),
+                          bottomRight: Radius.circular(cw(12)),
+                        ),
+                      ),
+                      child: AppText(
+                        txt: "LIVE",
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 10,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -183,7 +196,6 @@ class TradingScreen extends StatelessWidget {
 
   Widget _buildTimeframeToolbar() {
     return Container(
-      color: AppColor.primaryBackground,
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       child: Row(
         children: [
@@ -253,7 +265,6 @@ class TradingScreen extends StatelessWidget {
         SfCartesianChart(
           margin: EdgeInsets.zero,
           plotAreaBorderWidth: 0,
-          backgroundColor: AppColor.chartBackground,
           primaryXAxis: CategoryAxis(
             isVisible: true,
             labelStyle: const TextStyle(color: AppColor.textGrey, fontSize: 10),
@@ -412,7 +423,6 @@ class TradingScreen extends StatelessWidget {
 
   Widget _buildBottomChartBar(BuildContext context) {
     return Container(
-      color: AppColor.primaryBackground,
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       child: Row(
         children: [
@@ -468,17 +478,29 @@ class TradingScreen extends StatelessWidget {
   Widget _tradesInfo({VoidCallback? onTap}) {
     return GestureDetector(
       onTap: onTap ?? () {},
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-        decoration: BoxDecoration(
-          color: AppColor.accentYellow.withOpacity(0.2),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: AppText(
-          txt: "Trades 2",
-          color: AppColor.accentYellow,
-          fontSize: AppFontSize.f12,
-        ),
+      child: Row(
+        children: [
+          AppText(
+            txt: "Trades",
+            color: AppColor.white.withOpacity(0.5),
+            fontSize: AppFontSize.f12,
+            fontWeight: FontWeight.w400,
+          ),
+          Container(
+            margin: const EdgeInsets.only(left: 6),
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+            decoration: BoxDecoration(
+              color: AppColor.accentYellow,
+              borderRadius: BorderRadius.circular(50),
+            ),
+            child: AppText(
+              txt: "2",
+              color: Colors.black,
+              fontSize: AppFontSize.f12,
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -488,7 +510,7 @@ class TradingScreen extends StatelessWidget {
       builder: (context, controller, child) {
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          color: AppColor.cardBackground,
+          // color: AppColor.cardBackground,
           child: Column(
             children: [
               _buildTabToggle(controller),
@@ -523,7 +545,7 @@ class TradingScreen extends StatelessWidget {
       height: 45,
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: AppColor.primaryBackground,
+        color: AppColor.c1F242A,
         borderRadius: BorderRadius.circular(24),
       ),
       child: Row(
@@ -558,6 +580,7 @@ class TradingScreen extends StatelessWidget {
                   color: controller.selectedOrderType == OrderType.pending
                       ? AppColor.accentYellow
                       : Colors.transparent,
+
                   borderRadius: BorderRadius.circular(20),
                 ),
                 alignment: Alignment.center,
@@ -580,7 +603,7 @@ class TradingScreen extends StatelessWidget {
   Widget _buildBuySellSelector(TradingController controller) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColor.primaryBackground,
+        color: AppColor.c1F242A,
         borderRadius: BorderRadius.circular(25),
       ),
       child: Row(
@@ -593,7 +616,7 @@ class TradingScreen extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: controller.selectedSide == TradeSide.sell
                       ? AppColor.sellRed.withOpacity(0.3)
-                      : AppColor.primaryBackground,
+                      : AppColor.transparent,
                   borderRadius: BorderRadius.circular(25),
                   border: Border.all(
                     color: controller.selectedSide == TradeSide.sell
@@ -620,7 +643,7 @@ class TradingScreen extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: controller.selectedSide == TradeSide.buy
                       ? AppColor.buyGreen.withOpacity(0.3)
-                      : AppColor.primaryBackground,
+                      : AppColor.transparent,
                   borderRadius: BorderRadius.circular(25),
                   border: Border.all(
                     color: controller.selectedSide == TradeSide.buy
