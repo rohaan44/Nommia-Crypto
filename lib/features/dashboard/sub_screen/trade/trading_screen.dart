@@ -4,7 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:nommia_crypto/features/dashboard/home_screen_controller.dart';
 import 'package:nommia_crypto/features/dashboard/sub_screen/trade/trading_controller.dart';
 import 'package:nommia_crypto/helpers/app_layout.dart';
-import 'package:nommia_crypto/ui_molecules/app_primary_button.dart';
+import 'package:nommia_crypto/ui_molecules/app_dismis_keyboard.dart';
 import 'package:nommia_crypto/ui_molecules/primary_textfield.dart';
 import 'package:nommia_crypto/utils/asset_utils.dart';
 import 'package:provider/provider.dart';
@@ -21,26 +21,28 @@ class TradingScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final model = Provider.of<DashBoardScreenController>(context);
 
-    return ChangeNotifierProvider(
-      create: (controller) => TradingController(),
-      child: Column(
-        children: [
-          //_buildHeader(context),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: 450,
-                    child: _buildChartSection(context, model),
-                  ),
-                  _buildOrderControls(),
-                ],
+    return AppDismissKeyboard(
+      child: ChangeNotifierProvider(
+        create: (controller) => TradingController(),
+        child: Column(
+          children: [
+            //_buildHeader(context),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 450,
+                      child: _buildChartSection(context, model),
+                    ),
+                    _buildOrderControls(),
+                  ],
+                ),
               ),
             ),
-          ),
-          // _buildBottomNav(),
-        ],
+            // _buildBottomNav(),
+          ],
+        ),
       ),
     );
   }
@@ -715,50 +717,68 @@ class TradingScreen extends StatelessWidget {
     BuildContext context,
     TradingController controller,
   ) {
-    // 1. If Multi-TP is enabled, show the list of TP levels
-    if (controller.multiTpEnabled) {
-      return Column(children: [_buildMultiTpSection(context, controller)]);
-    }
-
-    // 2. Standard SL/TP Logic
-    // if (controller.takeProfitEnabled && !controller.stopLossEnabled) {
-    //   return Row(
-    //     children: [
-    //       Expanded(child: _buildStopLossInputBox(controller)),
-    //       const SizedBox(width: 12),
-    //       Expanded(child: _buildTakeProfitInputBox(controller)),
-    //     ],
-    //   );
-    // }
-    if (controller.takeProfitEnabled || controller.stopLossEnabled) {
-      return Row(
-        children: [
-          Expanded(child: _buildTakeProfitInputBox(controller)),
-          const SizedBox(width: 12),
-          Column(
-            children: [
-              AppText(txt: "Price", color: AppColor.textGrey, fontSize: 12),
-              const SizedBox(height: 10),
-              AppText(txt: "Pips", color: AppColor.textGrey, fontSize: 12),
-            ],
-          ),
-          const SizedBox(width: 12),
-          Expanded(child: _buildTakeProfitInputBox(controller)),
+    return Column(
+      children: [
+        _buildStatsGrid(
+          amount: "0.89700",
+          amountRight: "0.89943",
+          amountUnit: "",
+          amountUnitRight: "",
+          //  percent: "0.13",
+          percentUnit: "%",
+          label: "Price",
+          isLeftEnabled: controller.stopLossEnabled,
+          isRightEnabled:
+              controller.takeProfitEnabled && !controller.multiTpEnabled,
+        ),
+        _buildStatsGrid(
+          amount: "113",
+          amountRight: "30",
+          amountUnit: "",
+          amountUnitRight: "",
+          //  percent: "0.13",
+          percentUnit: "%",
+          label: "Pips",
+          isLeftEnabled: controller.stopLossEnabled,
+          isRightEnabled:
+              controller.takeProfitEnabled && !controller.multiTpEnabled,
+        ),
+        if (controller.multiTpEnabled) ...[
+          const SizedBox(height: 16),
+          _buildMultiTpSection(context, controller),
         ],
-      );
-    }
-    // If only SL shows
-    // if (!controller.takeProfitEnabled && controller.stopLossEnabled) {
-    //   return Row(
-    //     children: [
-    //       Expanded(child: _buildStopLossInputBox(controller)),
-    //       const SizedBox(width: 12),
-    //       Expanded(child: _buildPlaceholderBox()),
-    //     ],
-    //   );
-    // }
+        if (controller.takeProfitEnabled || controller.stopLossEnabled) ...[
+          const SizedBox(height: 16),
+          _buildStatsGrid(
+            amount: "495.14",
+            amountRight: "131.45",
+            amountUnit: "\$",
+            amountUnitRight: "\$",
+            //  percent: "0.13",
+            percentUnit: "%",
+            label: "P&L",
+            isLeftEnabled: controller.stopLossEnabled,
+            isRightEnabled:
+                controller.takeProfitEnabled && !controller.multiTpEnabled,
+          ),
 
-    return Container();
+          _buildStatsGrid(
+            amount: "0.49",
+            amountRight: "0.13",
+            amountUnit: "%",
+            amountUnitRight: "%",
+            // percent: "0.49",
+            percentUnit: "%",
+            label: "%",
+            isLeftEnabled: controller.stopLossEnabled,
+            isRightEnabled:
+                controller.takeProfitEnabled && !controller.multiTpEnabled,
+          ),
+
+          const SizedBox(height: 16),
+        ],
+      ],
+    );
   }
 
   // --- NEW: Pending Price Input ---
@@ -773,13 +793,28 @@ class TradingScreen extends StatelessWidget {
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
         children: [
           AppText(txt: "Price", color: AppColor.textGrey, fontSize: 14),
-          AppText(
-            txt: controller.pendingOrderPrice.toString(),
-            color: AppColor.white,
-            fontWeight: FontWeight.w400,
-            fontSize: 16,
+          SizedBox(width: cw(50)),
+          Expanded(
+            child: TextField(
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                fillColor: AppColor.transparent,
+                border: InputBorder.none,
+                focusedBorder: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                errorBorder: InputBorder.none,
+                disabledBorder: InputBorder.none,
+                contentPadding: EdgeInsets.zero,
+                isCollapsed: true,
+              ),
+              textAlign: TextAlign.right,
+              controller: TextEditingController(
+                text: controller.pendingOrderPrice.toString(),
+              ),
+            ),
           ),
         ],
       ),
@@ -793,8 +828,34 @@ class TradingScreen extends StatelessWidget {
   ) {
     return Column(
       children: [
-        _buildStatsGrid(),
+        _buildStatsGrid(
+          amount: "495.14",
+          amountRight: "131.45",
+          amountUnit: "\$",
+          amountUnitRight: "\$",
+          //  percent: "0.13",
+          percentUnit: "%",
+          label: "P&L",
+          isLeftEnabled: controller.stopLossEnabled,
+          isRightEnabled:
+              controller.takeProfitEnabled && !controller.multiTpEnabled,
+        ),
+
+        _buildStatsGrid(
+          amount: "0.49",
+          amountRight: "0.13",
+          amountUnit: "%",
+          amountUnitRight: "%",
+          // percent: "0.49",
+          percentUnit: "%",
+          label: "%",
+          isLeftEnabled: controller.stopLossEnabled,
+          isRightEnabled:
+              controller.takeProfitEnabled && !controller.multiTpEnabled,
+        ),
+
         const SizedBox(height: 16),
+
         for (int i = 0; i < controller.multiTpLevels.length; i++)
           _buildMultiTpRow(context, controller, i),
         const SizedBox(height: 8),
@@ -803,96 +864,150 @@ class TradingScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStatsGrid() {
-    return Row(
+  Widget _buildStatsGrid({
+    required String amount,
+    required String amountUnit,
+    required String amountRight,
+    required String amountUnitRight,
+    required String percentUnit,
+    String label = "P&L",
+    bool isLeftEnabled = true,
+    bool isRightEnabled = true,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Expanded(child: _buildStatsColumn(left: true)),
-        const SizedBox(width: 8),
-        Column(
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                AppText(txt: "Price", color: AppColor.textGrey, fontSize: 10),
-                SizedBox(height: ch(10)),
-                AppText(txt: "Pips", color: AppColor.textGrey, fontSize: 10),
-              ],
+            Container(
+              width: cw(150),
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: const Color(0xff121212),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(
+                    label == "P&L" || label == "Price" ? 12 : 0,
+                  ),
+                  topRight: Radius.circular(
+                    label == "P&L" || label == "Price" ? 12 : 0,
+                  ),
+                  bottomLeft: Radius.circular(
+                    label == "%" || label == "Pips" ? 12 : 0,
+                  ),
+                  bottomRight: Radius.circular(
+                    label == "%" || label == "Pips" ? 12 : 0,
+                  ),
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: SizedBox(
+                          height: ch(20),
+                          child: TextField(
+                            enabled: isLeftEnabled,
+                            controller: TextEditingController(text: amount),
+                            style: TextStyle(
+                              color: isLeftEnabled
+                                  ? AppColor.white
+                                  : AppColor.textGrey,
+                              fontSize: AppFontSize.f12,
+                            ),
+                            decoration: const InputDecoration(
+                              fillColor: AppColor.transparent,
+                              border: InputBorder.none,
+                              isDense: true,
+                              contentPadding: EdgeInsets.zero,
+                            ),
+                          ),
+                        ),
+                      ),
+                      AppText(
+                        txt: amountUnit,
+                        color: isLeftEnabled
+                            ? AppColor.white
+                            : AppColor.textGrey,
+                        fontSize: AppFontSize.f12,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                ],
+              ),
             ),
-
-            Column(
-              children: [
-                SizedBox(height: ch(28)),
-                AppText(txt: "P&L", color: AppColor.textGrey, fontSize: 10),
-                SizedBox(height: ch(10)),
-                AppText(txt: "%", color: AppColor.textGrey, fontSize: 10),
-              ],
+            const SizedBox(width: 8),
+            AppText(txt: label, color: AppColor.textGrey, fontSize: 10),
+            const SizedBox(width: 8),
+            Container(
+              width: cw(150),
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: const Color(0xff121212),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(
+                    label == "P&L" || label == "Price" ? 12 : 0,
+                  ),
+                  topRight: Radius.circular(
+                    label == "P&L" || label == "Price" ? 12 : 0,
+                  ),
+                  bottomLeft: Radius.circular(
+                    label == "%" || label == "Pips" ? 12 : 0,
+                  ),
+                  bottomRight: Radius.circular(
+                    label == "%" || label == "Pips" ? 12 : 0,
+                  ),
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: SizedBox(
+                          height: ch(20),
+                          child: TextField(
+                            enabled: isRightEnabled,
+                            controller: TextEditingController(
+                              text: amountRight,
+                            ),
+                            style: TextStyle(
+                              color: isRightEnabled
+                                  ? AppColor.white
+                                  : AppColor.textGrey,
+                              fontSize: AppFontSize.f12,
+                            ),
+                            decoration: const InputDecoration(
+                              fillColor: AppColor.transparent,
+                              border: InputBorder.none,
+                              isDense: true,
+                              contentPadding: EdgeInsets.zero,
+                            ),
+                          ),
+                        ),
+                      ),
+                      AppText(
+                        txt: amountUnitRight,
+                        color: isRightEnabled
+                            ? AppColor.white
+                            : AppColor.textGrey,
+                        fontSize: AppFontSize.f12,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                ],
+              ),
             ),
           ],
-        ),
-        const SizedBox(width: 8),
-        Expanded(child: _buildStatsColumn(left: false)),
-      ],
-    );
-  }
-
-  Widget _buildStatsColumn({required bool left}) {
-    return Column(
-      children: [
-        Container(
-          width: cw(150),
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: const Color(0xff121212), // Darker background
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              AppText(txt: "0.89943", color: AppColor.textGrey, fontSize: 12),
-              const SizedBox(height: 8),
-              AppText(txt: "113", color: AppColor.textGrey, fontSize: 14),
-            ],
-          ),
-        ),
-        const SizedBox(height: 8),
-        Container(
-          width: cw(150),
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: const Color(0xff121212),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  AppText(
-                    txt: left ? "495.14" : "131.45",
-                    color: AppColor.textGrey,
-                    fontSize: 12,
-                  ),
-                  if (left)
-                    AppText(txt: "\$", color: AppColor.textGrey, fontSize: 10),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  AppText(
-                    txt: left ? "0.49" : "0.13",
-                    color: AppColor.textGrey,
-                    fontSize: 14,
-                  ),
-                  if (left)
-                    AppText(txt: "%", color: AppColor.textGrey, fontSize: 10),
-                ],
-              ),
-            ],
-          ),
         ),
       ],
     );
@@ -957,20 +1072,38 @@ class TradingScreen extends StatelessWidget {
               ),
               const Spacer(),
               Container(
-                width: 120, // Adjust as needed
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 8,
-                ),
+                height: ch(40),
+                width: cw(120), // Adjust as needed
                 decoration: BoxDecoration(
                   color: const Color(0xff121212),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                alignment: Alignment.centerRight,
-                child: AppText(
-                  txt: level.price.toString(),
-                  color: AppColor.white,
-                  fontSize: 14,
+                alignment: Alignment.center,
+                child: TextField(
+                  textAlign: TextAlign.end,
+                  style: TextStyle(
+                    color: AppColor.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400,
+                  ),
+                  keyboardType: TextInputType.number,
+                  controller: TextEditingController(
+                    text: level.price.toString(),
+                  ),
+                  decoration: InputDecoration(
+                    contentPadding: EdgeInsets.only(right: cw(10)),
+                    fillColor: AppColor.transparent,
+                    border: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                    errorBorder: InputBorder.none,
+                    disabledBorder: InputBorder.none,
+                    hintText: "0.89943",
+                    hintStyle: TextStyle(
+                      color: AppColor.textGrey,
+                      fontSize: 12,
+                    ),
+                  ),
                 ),
               ),
             ],
@@ -1001,9 +1134,9 @@ class TradingScreen extends StatelessWidget {
                         enabledThumbRadius: 8,
                       ),
                       overlayShape: SliderComponentShape.noOverlay,
-                      trackHeight: 2,
+                      trackHeight: 3,
                       tickMarkShape: const RoundSliderTickMarkShape(
-                        tickMarkRadius: 2,
+                        tickMarkRadius: 3,
                       ),
                       activeTickMarkColor: AppColor.inactiveGrey,
                       inactiveTickMarkColor: AppColor.inactiveGrey,
@@ -1012,7 +1145,7 @@ class TradingScreen extends StatelessWidget {
                       value: level.percentage,
                       min: 0,
                       max: 100,
-                      divisions: 4, // 0, 25, 50, 75, 100
+                      divisions: 100, // 0, 25, 50, 75, 100
                       onChanged: (val) =>
                           controller.updateMultiTpPercentage(index, val),
                     ),
@@ -1034,99 +1167,6 @@ class TradingScreen extends StatelessWidget {
                   fontSize: 12,
                 ),
               ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPlaceholderBox() {
-    return Container(
-      height: 60,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      decoration: BoxDecoration(
-        color: AppColor.primaryBackground,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          AppText(txt: "0.89943", color: AppColor.textGrey, fontSize: 13),
-          const SizedBox(height: 2),
-          AppText(
-            txt: "113",
-            color: AppColor.white,
-            fontSize: 15,
-            fontWeight: FontWeight.w400,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTakeProfitInputBox(TradingController controller) {
-    return Container(
-      height: 60,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
-        color: AppColor.primaryBackground,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              AppText(
-                txt: controller.takeProfitPrice.toString(),
-                color: AppColor.white,
-                fontWeight: FontWeight.w400,
-                fontSize: 14,
-              ),
-            ],
-          ),
-          const SizedBox(height: 4),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              AppText(
-                txt: controller.takeProfitPips.toString(),
-                color: AppColor.white,
-                fontWeight: FontWeight.w400,
-                fontSize: 14,
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStopLossInputBox(TradingController controller) {
-    String label = controller.slInputMode == RiskInputMode.price
-        ? "Price"
-        : "Money";
-    return Container(
-      height: 60,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
-        color: AppColor.primaryBackground,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          AppText(txt: "Stop Loss", color: AppColor.textGrey, fontSize: 12),
-          const SizedBox(height: 4),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              AppText(txt: label, color: AppColor.textGrey, fontSize: 12),
             ],
           ),
         ],
@@ -1184,25 +1224,6 @@ class TradingScreen extends StatelessWidget {
                   prefixIcon: SvgPicture.asset(AssetUtils.searchIcon),
                 ),
 
-                // Container(
-                //   padding: const EdgeInsets.symmetric(horizontal: 12),
-                //   height: 40,
-                //   decoration: BoxDecoration(
-                //     color: AppColor.primaryBackground,
-                //     borderRadius: BorderRadius.circular(20),
-                //   ),
-                //   child: Row(
-                //     children: [
-                //       Icon(Icons.search, color: AppColor.textGrey, size: 20),
-                //       SizedBox(width: 8),
-                //       AppText(
-                //         txt: "Search",
-                //         color: AppColor.textGrey,
-                //         fontSize: 14,
-                //       ),
-                //     ],
-                //   ),
-                // ),
                 const SizedBox(height: 10),
                 _buildFilterOption("CTPCF.HK", false),
                 _buildFilterOption("PEP.US", false),
@@ -1284,127 +1305,6 @@ class TradingScreen extends StatelessWidget {
     );
   }
 
-  // Widget _buildBottomNav() {
-  //   return Consumer<TradingController>(
-  //     builder: (context, controller, child) {
-  //       return Container(
-  //         color: AppColor.primaryBackground,
-  //         child: Column(
-  //           mainAxisSize: MainAxisSize.min,
-  //           children: [
-  //             Padding(
-  //               padding: const EdgeInsets.symmetric(
-  //                 horizontal: 16.0,
-  //                 vertical: 10,
-  //               ),
-  //               child: Row(
-  //                 children: [
-  //                   _lotCounter(controller),
-  //                   const SizedBox(width: 12),
-  //                   _lotDropdown(),
-  //                 ],
-  //               ),
-  //             ),
-  //             // CTA Button
-  //             Padding(
-  //               padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-  //               child: SizedBox(
-  //                 width: double.infinity,
-  //                 height: 55,
-  //                 child: ElevatedButton(
-  //                   onPressed: () {},
-  //                   style: ElevatedButton.styleFrom(
-  //                     backgroundColor: AppColor.accentYellow,
-  //                     shape: RoundedRectangleBorder(
-  //                       borderRadius: BorderRadius.circular(28),
-  //                     ),
-  //                   ),
-  //                   child: AppText(
-  //                     txt: controller.ctaButtonText,
-  //                     color: Colors.black,
-  //                     fontSize: AppFontSize.f16,
-  //                     fontWeight: FontWeight.bold,
-  //                   ),
-  //                 ),
-  //               ),
-  //             ),
-  //             // Bottom Nav Bar
-  //             // Container(
-  //             //   padding: const EdgeInsets.symmetric(vertical: 8),
-  //             //   decoration: const BoxDecoration(
-  //             //     border: Border(top: BorderSide(color: AppColor.black)),
-  //             //   ),
-  //             //   child: Row(
-  //             //     mainAxisAlignment: MainAxisAlignment.spaceAround,
-  //             //     children: [
-  //             //       _navItem(Icons.public, "Trade", true),
-  //             //       _navItem(Icons.bar_chart, "Markets", false),
-  //             //       _navItem(Icons.home, "Home", false),
-  //             //       _navItem(Icons.copy_all, "Social", false),
-  //             //       _navItem(Icons.person_outline, "Accounts", false),
-  //             //     ],
-  //             //   ),
-  //             // ),
-  //           ],
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
-
-  // Widget _lotCounter(TradingController controller) {
-  //   return Expanded(
-  //     flex: 2,
-  //     child: Container(
-  //       height: 50,
-  //       decoration: BoxDecoration(
-  //         border: Border.all(color: AppColor.inactiveGrey),
-  //         borderRadius: BorderRadius.circular(8),
-  //       ),
-  //       child: Row(
-  //         mainAxisAlignment: MainAxisAlignment.spaceAround,
-  //         children: [
-  //           IconButton(
-  //             onPressed: () => controller.setLotSize(controller.lotSize - 1),
-  //             icon: const Icon(Icons.remove, color: AppColor.textGrey),
-  //           ),
-  //           AppText(
-  //             txt: controller.lotSize.toString(),
-  //             fontSize: AppFontSize.f20,
-  //             fontWeight: FontWeight.w500,
-  //             color: AppColor.white,
-  //           ),
-  //           IconButton(
-  //             onPressed: () => controller.setLotSize(controller.lotSize + 1),
-  //             icon: const Icon(Icons.add, color: AppColor.textGrey),
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
-
-  // Widget _lotDropdown() {
-  //   return Expanded(
-  //     flex: 1,
-  //     child: Container(
-  //       height: 50,
-  //       decoration: BoxDecoration(
-  //         color: AppColor.cardBackground,
-  //         borderRadius: BorderRadius.circular(8),
-  //       ),
-  //       padding: const EdgeInsets.symmetric(horizontal: 12),
-  //       child: Row(
-  //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //         children: [
-  //           AppText(txt: "Lots", color: AppColor.white),
-  //           Icon(Icons.keyboard_arrow_down, color: AppColor.textGrey),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
-
   Widget _buildMarginInfo() {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
@@ -1438,12 +1338,28 @@ class TradingScreen extends StatelessWidget {
             () => controller.decrementLotSize(),
           ),
           Expanded(
-            child: Center(
-              child: AppText(
-                txt: controller.lotSize.toString(),
-                color: AppColor.white,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
+            child: TextField(
+              keyboardType: TextInputType.numberWithOptions(decimal: true),
+              style: TextStyle(color: AppColor.white),
+              decoration: InputDecoration(
+                fillColor: AppColor.transparent,
+                border: InputBorder.none,
+                focusedBorder: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                errorBorder: InputBorder.none,
+                disabledBorder: InputBorder.none,
+                contentPadding: EdgeInsets.zero,
+                isCollapsed: true,
+              ),
+              textAlign: TextAlign.center,
+              onChanged: (value) {
+                double? val = double.tryParse(value);
+                if (val != null) {
+                  controller.setLotSize(val);
+                }
+              },
+              controller: TextEditingController(
+                text: controller.lotSize.toString(),
               ),
             ),
           ),

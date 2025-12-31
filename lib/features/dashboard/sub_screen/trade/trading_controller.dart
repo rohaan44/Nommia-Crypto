@@ -7,6 +7,10 @@ enum TradeSide { buy, sell }
 enum RiskInputMode { price, pips, percentage, money }
 
 class TradingController with ChangeNotifier {
+  final priceController = TextEditingController();
+  final pipsController = TextEditingController();
+  final percentageController = TextEditingController();
+  final moneyController = TextEditingController();
   // --- Global Context & Pair ---
   final String _activePair = "AUDCAD";
   double _executionPrice = 0.89825; // Price from the bottom CTA
@@ -91,20 +95,29 @@ class TradingController with ChangeNotifier {
 
   void toggleStopLoss(bool value) {
     _stopLossEnabled = value;
+    if (value) {
+      _takeProfitEnabled = false;
+      _multiTpEnabled = false;
+    }
     notifyListeners();
   }
 
   void toggleTakeProfit(bool value) {
     _takeProfitEnabled = value;
-    // Ensure Multi TP is off if regular TP is toggled off (or vice versa logic if needed)
-    if (!value) _multiTpEnabled = false;
+    if (value) {
+      _multiTpEnabled = false;
+      _stopLossEnabled = false;
+    }
     notifyListeners();
   }
 
   void toggleMultiTp(bool value) {
     _multiTpEnabled = value;
     // If Multi TP is ON, standard TP toggle effectively becomes controlled by it
-    if (value) _takeProfitEnabled = true;
+    if (value) {
+      _takeProfitEnabled = false;
+      _stopLossEnabled = false;
+    }
     notifyListeners();
   }
 
@@ -126,15 +139,45 @@ class TradingController with ChangeNotifier {
   }
 
   void incrementLotSize() {
-    _lotSize += 1.0;
-    notifyListeners();
+    double current = double.parse(_lotSize.toStringAsFixed(2));
+    double step = 0.01;
+
+    if (current >= 1.0) {
+      step = 1.0;
+    } else if (current >= 0.10) {
+      step = 0.10;
+    } else {
+      step = 0.01;
+    }
+
+    setLotSize(double.parse((current + step).toStringAsFixed(2)));
   }
 
   void decrementLotSize() {
-    if (_lotSize >= 1.0) {
-      _lotSize -= 1.0;
-      notifyListeners();
+    double current = double.parse(_lotSize.toStringAsFixed(2));
+    double step = 0.01;
+
+    // Logic: snap to next lower interval
+    // If > 1.0, subtract 1.0.
+    // If <= 1.0 and > 0.10, subtract 0.10.
+    // If <= 0.10, subtract 0.01.
+
+    // Edge case handling for exact boundaries often implies we drop down into the smaller interval.
+    // e.g. 1.0 -> 0.9. (1.0 is the boundary. 1.0 - 0.1 = 0.9).
+    // e.g. 0.1 -> 0.09. (0.1 is the boundary. 0.1 - 0.01 = 0.09).
+
+    if (current > 1.00001) {
+      step = 1.0;
+    } else if (current > 0.10001) {
+      step = 0.10;
+    } else {
+      step = 0.01;
     }
+
+    double newValue = current - step;
+    if (newValue < 0.01) newValue = 0.01;
+
+    setLotSize(double.parse(newValue.toStringAsFixed(2)));
   }
 
   // Example of changing the input mode (as seen in Frame 1)
