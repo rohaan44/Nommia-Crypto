@@ -1352,15 +1352,7 @@ class TradingScreen extends StatelessWidget {
                 isCollapsed: true,
               ),
               textAlign: TextAlign.center,
-              onChanged: (value) {
-                double? val = double.tryParse(value);
-                if (val != null) {
-                  controller.setLotSize(val);
-                }
-              },
-              controller: TextEditingController(
-                text: controller.lotSize.toString(),
-              ),
+              controller: controller.sellController,
             ),
           ),
           _buildStepperButton(Icons.add, () => controller.incrementLotSize()),
