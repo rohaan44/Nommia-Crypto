@@ -12,7 +12,6 @@ import 'package:nommia_crypto/helpers/app_layout.dart';
 import 'package:nommia_crypto/ui_molecules/custom_appbar.dart';
 import 'package:nommia_crypto/utils/color_utils.dart';
 import 'package:provider/provider.dart';
-import 'package:sizer/sizer.dart';
 
 class DashBoardScreen extends StatelessWidget {
   DashBoardScreen({super.key});
@@ -23,7 +22,7 @@ class DashBoardScreen extends StatelessWidget {
     return Consumer<DashBoardScreenController>(
       builder: (context, model, child) {
         return Scaffold(
-           backgroundColor: AppColor.c121717,
+          backgroundColor: AppColor.c121717,
           appBar: model.selectedIndex == 1
               ? PreferredSize(
                   preferredSize: Size.fromHeight(ch(0)),

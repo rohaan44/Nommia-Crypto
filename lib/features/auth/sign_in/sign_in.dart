@@ -35,23 +35,23 @@ class SignIn extends StatelessWidget {
   }
 }
 
-Widget _buildAppbar({required BuildContext context}) {
-  return SizedBox(
-    height: ch(116),
-    child: Padding(
-      padding: EdgeInsets.symmetric(horizontal: cw(24)),
-      child: Row(
-        children: [
-          // GestureDetector(
-          //   onTap: (){
-          //     nav
-          //   },
-          //   child: Icon(Icons.arrow_back, color: AppColor.white))
-        ],
-      ),
-    ),
-  );
-}
+// Widget _buildAppbar({required BuildContext context}) {
+//   return SizedBox(
+//     height: ch(116),
+//     child: Padding(
+//       padding: EdgeInsets.symmetric(horizontal: cw(24)),
+//       child: Row(
+//         children: [
+//           // GestureDetector(
+//           //   onTap: (){
+//           //     nav
+//           //   },
+//           //   child: Icon(Icons.arrow_back, color: AppColor.white))
+//         ],
+//       ),
+//     ),
+//   );
+// }
 
 Widget _buildBody({
   required BuildContext context,

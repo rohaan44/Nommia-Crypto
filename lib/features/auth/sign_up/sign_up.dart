@@ -49,10 +49,6 @@ Widget _buildBody({
   required BuildContext context,
   required SignUpController model,
 }) {
-  final isNext =
-      model.emailController.text.isNotEmpty &&
-      model.reEnterPasswordController.text.isNotEmpty &&
-      model.passwordController.text.isNotEmpty;
   return appBody(
     body: [
       SizedBox(height: 116),

@@ -133,7 +133,33 @@ class ProfileScreen extends StatelessWidget {
       itemBuilder: (context, index) {
         final trade = controller.trades[index];
         return GestureDetector(
-          onTap: () => _showTradeDetailSheet(context, trade, controller),
+          onTap: () {
+            if (controller.selectedTab == "Open") {
+              _showTradeDetailSheet(
+                context,
+                trade,
+                controller,
+                isOpen: true,
+                isClose: false,
+              );
+            } else if (controller.selectedTab == "Pending") {
+              _showTradeDetailSheet(
+                context,
+                trade,
+                controller,
+                isOpen: false,
+                isClose: false,
+              );
+            } else {
+              _showTradeDetailSheet(
+                context,
+                trade,
+                controller,
+                isClose: true,
+                isOpen: false,
+              );
+            }
+          },
           child: Container(
             margin: const EdgeInsets.only(bottom: 12),
 
@@ -292,6 +318,9 @@ class ProfileScreen extends StatelessWidget {
     TradeItem trade,
     ProfileController controller, {
     bool isDeleteMode = false,
+    bool isClose = false,
+
+    bool isOpen = false,
   }) {
     showModalBottomSheet(
       context: context,
@@ -364,65 +393,73 @@ class ProfileScreen extends StatelessWidget {
               const Divider(color: AppColor.divider),
               const SizedBox(height: 20),
               // Buttons
-              Row(
-                children: [
-                  Expanded(
-                    child: SizedBox(
-                      height: 50,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColor.accentYellow,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(25),
+              if (isClose == true) ...[
+                SizedBox.shrink(),
+              ] else ...[
+                Row(
+                  children: [
+                    Expanded(
+                      child: SizedBox(
+                        height: 50,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColor.accentYellow,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(25),
+                            ),
                           ),
-                        ),
-                        onPressed: () {
-                          Navigator.pop(context);
-                          Provider.of<DashBoardScreenController>(
-                            context,
-                            listen: false,
-                          ).onBottomNavTap(0);
-                        }, // Modify placeholder
-                        child: AppText(
-                          txt: "Modify",
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
+                          onPressed: () {
+                            Navigator.pop(context);
+                            Provider.of<DashBoardScreenController>(
+                              context,
+                              listen: false,
+                            ).onBottomNavTap(0);
+                          }, // Modify placeholder
+                          child: AppText(
+                            txt: "Modify",
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: SizedBox(
-                      height: 50,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColor.sellRed,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(25),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: SizedBox(
+                        height: 50,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColor.sellRed,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(25),
+                            ),
                           ),
-                        ),
-                        onPressed: () {
-                          if (isDeleteMode) {
-                            // "Cancel" action -> Delete Trade
-                            Navigator.pop(context); // Close sheet
-                            controller.removeTrade(trade);
-                          } else {
-                            // "Close" action -> Show Warning
-                            Navigator.pop(context); // Close current sheet
-                            _showCloseWarningDialog(context, trade, controller);
-                          }
-                        },
-                        child: AppText(
-                          txt: isDeleteMode ? "Cancel" : "Cancel",
-                          color: AppColor.white,
-                          fontWeight: FontWeight.bold,
+                          onPressed: () {
+                            if (isDeleteMode) {
+                              // "Cancel" action -> Delete Trade
+                              Navigator.pop(context); // Close sheet
+                              controller.removeTrade(trade);
+                            } else {
+                              // "Close" action -> Show Warning
+                              Navigator.pop(context); // Close current sheet
+                              _showCloseWarningDialog(
+                                context,
+                                trade,
+                                controller,
+                              );
+                            }
+                          },
+                          child: AppText(
+                            txt: isOpen == true ? "Close" : "Cancel",
+                            color: AppColor.c000000,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                ),
+              ],
               const SizedBox(height: 20),
             ],
           ),
