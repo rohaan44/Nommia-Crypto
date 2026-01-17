@@ -1020,7 +1020,7 @@ class SocialScreen extends StatelessWidget {
                   side: BorderSide.none,
                 ),
                 child: AppText(
-                  txt: "Copy",
+                  txt: "+ Funds",
                   color: Colors.black,
                   fontWeight: FontWeight.w600,
                   fontSize: 14,

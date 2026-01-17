@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:nommia_crypto/features/dashboard/sub_screen/account_screen/account_screen_controller.dart';
 import 'package:nommia_crypto/helpers/app_layout.dart';
+import 'package:nommia_crypto/routes/route_paths.dart';
 import 'package:nommia_crypto/ui_molecules/app_background_conatiner/app_background_conatiner.dart';
 import 'package:nommia_crypto/ui_molecules/app_body/app_body.dart';
 import 'package:nommia_crypto/ui_molecules/app_primary_button.dart';
@@ -295,12 +296,7 @@ Widget _buildBottomBody({
 
           InkWell(
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const CreditTransferView(),
-                ),
-              );
+               _showDepositFundsBottomSheet(context: context, controller: model, route: RoutePaths.cardTransfer);
             },
             child: Container(
               height: ch(60),
@@ -331,7 +327,7 @@ Widget _buildBottomBody({
           SizedBox(height: ch(12)),
           InkWell(
             onTap: () {
-              _showDepositFundsBottomSheet(context: context, controller: model);
+              _showDepositFundsBottomSheet(context: context, controller: model, route: RoutePaths.bankTransfer);
             },
             child: Container(
               height: ch(60),
@@ -1275,6 +1271,7 @@ void _showDepositFundsBottomSheet({
   required BuildContext context,
   String title = "Deposit Funds",
   required AccountScreenController controller,
+  required String route,
 }) {
   showModalBottomSheet(
     context: context,
@@ -1351,12 +1348,7 @@ void _showDepositFundsBottomSheet({
                         height: ch(40),
                         onPressed: () {
                           Navigator.pop(context);
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const BankTransferView(),
-                            ),
-                          );
+                          Navigator.pushNamed(context, route);
                         },
                         text: "OK",
                       ),

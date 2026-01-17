@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 enum OrderType { market, pending }
+
 enum TradeSide { buy, sell }
+
 enum RiskInputMode { price, pips, percentage, money }
 
 class TradingController with ChangeNotifier {
@@ -114,7 +116,7 @@ class TradingController with ChangeNotifier {
         } else {
           newText = newSize.toString();
         }
-     if (sellController.text != newText) {
+        if (sellController.text != newText) {
           sellController.text = newText;
           sellController.selection = TextSelection.fromPosition(
             TextPosition(offset: sellController.text.length),
@@ -179,7 +181,7 @@ class TradingController with ChangeNotifier {
     String price = _selectedOrderType == OrderType.market
         ? _executionPrice.toString()
         : _pendingOrderPrice.toString();
-  String orderAction = _selectedOrderType == OrderType.market
+    String orderAction = _selectedOrderType == OrderType.market
         ? side
         : "$side LIMIT";
 
@@ -196,6 +198,8 @@ class TradingController with ChangeNotifier {
   void updateMultiTpPercentage(int index, double value) {
     if (index >= 0 && index < _multiTpLevels.length) {
       _multiTpLevels[index].percentage = value;
+      debugPrint("Percentage updated: ${_multiTpLevels[index].percentage}");
+      
       notifyListeners();
     }
   }

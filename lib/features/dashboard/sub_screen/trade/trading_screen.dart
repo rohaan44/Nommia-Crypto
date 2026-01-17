@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:nommia_crypto/features/dashboard/home_screen_controller.dart';
 import 'package:nommia_crypto/features/dashboard/sub_screen/trade/trading_controller.dart';
@@ -694,11 +695,7 @@ class TradingScreen extends StatelessWidget {
   Widget _buildSwitch(String label, bool value, Function(bool) onChanged) {
     return Row(
       children: [
-        AppText(
-          txt: label,
-          color: AppColor.textGrey,
-          fontSize: AppFontSize.f12,
-        ),
+        AppText(txt: label, color: AppColor.white, fontSize: AppFontSize.f12),
         const SizedBox(width: 4),
         Transform.scale(
           scale: 0.7,
@@ -783,41 +780,46 @@ class TradingScreen extends StatelessWidget {
 
   // --- NEW: Pending Price Input ---
   Widget _buildPendingPriceInput(TradingController controller) {
-    return Container(
-      height: 50,
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      decoration: BoxDecoration(
-        color: AppColor.primaryBackground,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColor.accentYellow.withOpacity(0.3)),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
-        children: [
-          AppText(txt: "Price", color: AppColor.textGrey, fontSize: 14),
-          SizedBox(width: cw(50)),
-          Expanded(
-            child: TextField(
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                fillColor: AppColor.transparent,
-                border: InputBorder.none,
-                focusedBorder: InputBorder.none,
-                enabledBorder: InputBorder.none,
-                errorBorder: InputBorder.none,
-                disabledBorder: InputBorder.none,
-                contentPadding: EdgeInsets.zero,
-                isCollapsed: true,
-              ),
-              textAlign: TextAlign.right,
-              controller: TextEditingController(
-                text: controller.pendingOrderPrice.toString(),
-              ),
+      children: [
+        AppText(txt: "Price", color: AppColor.white, fontSize: AppFontSize.f14),
+        SizedBox(width: cw(50)),
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: cw(10)),
+          alignment: Alignment.center,
+          width: cw(120),
+          height: ch(40),
+          decoration: BoxDecoration(
+            color: AppColor.primaryBackground,
+            borderRadius: BorderRadius.circular(12),
+            //border: Border.all(color: AppColor.accentYellow.withOpacity(0.3)),
+          ),
+          child: TextField(
+            keyboardType: TextInputType.number,
+            style: TextStyle(
+              color: AppColor.white,
+              fontSize: AppFontSize.f14,
+              fontWeight: FontWeight.w400,
+            ),
+            decoration: InputDecoration(
+              fillColor: AppColor.transparent,
+              border: InputBorder.none,
+              focusedBorder: InputBorder.none,
+              enabledBorder: InputBorder.none,
+              errorBorder: InputBorder.none,
+              disabledBorder: InputBorder.none,
+              contentPadding: EdgeInsets.zero,
+              isCollapsed: true,
+            ),
+            textAlign: TextAlign.right,
+            controller: TextEditingController(
+              text: controller.pendingOrderPrice.toString(),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -943,7 +945,12 @@ class TradingScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 8),
-            AppText(txt: label, color: AppColor.textGrey, fontSize: 10),
+            AppText(
+              txt: label,
+              color: AppColor.white,
+              fontSize: AppFontSize.f10,
+              fontWeight: FontWeight.w500,
+            ),
             const SizedBox(width: 8),
             Container(
               width: cw(150),
@@ -1003,7 +1010,7 @@ class TradingScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: ch(8)),
                 ],
               ),
             ),
@@ -1053,125 +1060,7 @@ class TradingScreen extends StatelessWidget {
     TradingController controller,
     int index,
   ) {
-    final level = controller.multiTpLevels[index];
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      child: Column(
-        children: [
-          // Row 1: Price Input
-          Row(
-            children: [
-              SizedBox(
-                width: 40,
-                child: AppText(
-                  txt: "Price",
-                  color: AppColor.white,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-              const Spacer(),
-              Container(
-                height: ch(40),
-                width: cw(120), // Adjust as needed
-                decoration: BoxDecoration(
-                  color: const Color(0xff121212),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                alignment: Alignment.center,
-                child: TextField(
-                  textAlign: TextAlign.end,
-                  style: TextStyle(
-                    color: AppColor.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400,
-                  ),
-                  keyboardType: TextInputType.number,
-                  controller: TextEditingController(
-                    text: level.price.toString(),
-                  ),
-                  decoration: InputDecoration(
-                    contentPadding: EdgeInsets.only(right: cw(10)),
-                    fillColor: AppColor.transparent,
-                    border: InputBorder.none,
-                    focusedBorder: InputBorder.none,
-                    enabledBorder: InputBorder.none,
-                    errorBorder: InputBorder.none,
-                    disabledBorder: InputBorder.none,
-                    hintText: "0.89943",
-                    hintStyle: TextStyle(
-                      color: AppColor.textGrey,
-                      fontSize: 12,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          // Row 2: Slider + Percentage
-          Row(
-            children: [
-              SizedBox(
-                width: 40,
-                child: AppText(
-                  txt: "TP${index + 1}",
-                  color: AppColor.textGrey,
-                  fontSize: 12,
-                ),
-              ),
-              Expanded(
-                child: SizedBox(
-                  height: 20,
-                  child: SliderTheme(
-                    data: SliderTheme.of(context).copyWith(
-                      activeTrackColor: AppColor.white,
-                      inactiveTrackColor: AppColor.inactiveGrey.withOpacity(
-                        0.3,
-                      ),
-                      thumbColor: AppColor.white,
-                      thumbShape: const RoundSliderThumbShape(
-                        enabledThumbRadius: 8,
-                      ),
-                      overlayShape: SliderComponentShape.noOverlay,
-                      trackHeight: 3,
-                      tickMarkShape: const RoundSliderTickMarkShape(
-                        tickMarkRadius: 3,
-                      ),
-                      activeTickMarkColor: AppColor.inactiveGrey,
-                      inactiveTickMarkColor: AppColor.inactiveGrey,
-                    ),
-                    child: Slider(
-                      value: level.percentage,
-                      min: 0,
-                      max: 100,
-                      divisions: 100, // 0, 25, 50, 75, 100
-                      onChanged: (val) =>
-                          controller.updateMultiTpPercentage(index, val),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Container(
-                width: 60,
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                decoration: BoxDecoration(
-                  color: const Color(0xff121212),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                alignment: Alignment.center,
-                child: AppText(
-                  txt: "${level.percentage.toInt()}%",
-                  color: AppColor.white,
-                  fontSize: 12,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
+    return _MultiTpRow(controller: controller, index: index);
   }
 
   void _showDateRangeBottomSheet(BuildContext context) {
@@ -1324,7 +1213,7 @@ class TradingScreen extends StatelessWidget {
 
   Widget _buildLotSizeSelector(TradingController controller) {
     return Container(
-      height: 50,
+      height: ch(50),
       padding: const EdgeInsets.symmetric(horizontal: 4),
       decoration: BoxDecoration(
         color: AppColor.primaryBackground,
@@ -1340,7 +1229,10 @@ class TradingScreen extends StatelessWidget {
           Expanded(
             child: TextField(
               keyboardType: TextInputType.numberWithOptions(decimal: true),
-              style: TextStyle(color: AppColor.white),
+              style: TextStyle(
+                color: AppColor.white,
+                fontSize: AppFontSize.f14,
+              ),
               decoration: InputDecoration(
                 fillColor: AppColor.transparent,
                 border: InputBorder.none,
@@ -1399,33 +1291,25 @@ class TradingScreen extends StatelessWidget {
           ),
         ),
         onPressed: () {
-          // Generate Random ID (Mock)
           String orderId = (1000000 + DateTime.now().millisecond).toString();
-
-          // Determine Action Text & Color
           bool isBuy = controller.selectedSide == TradeSide.buy;
           String sideText = isBuy ? "BUY" : "SELL";
           Color actionColor = isBuy
               ? const Color(0xff0B5AC3)
-              : AppColor.sellRed; // Matching Buy Blue / Sell Red
+              : AppColor.sellRed;
 
           String orderType = controller.selectedOrderType == OrderType.market
               ? "MARKET"
               : "LIMIT";
           String mainText = "$orderType $sideText";
 
-          // Pending Logic tweak: if Pending + Buy -> Buy Limit. If Pending + Sell -> Sell Limit.
           if (controller.selectedOrderType == OrderType.pending) {
             mainText = "$sideText LIMIT";
           }
-
-          // Randomize Status for Demo
           bool isSuccess = DateTime.now().millisecond % 2 == 0;
           TradeStatus status = isSuccess
               ? TradeStatus.success
               : TradeStatus.failed;
-
-          // Show Dialog
           showDialog(
             context: context,
             builder: (context) => TradeStatusDialog(
@@ -1451,20 +1335,211 @@ class TradingScreen extends StatelessWidget {
     );
   }
 
-  //   Widget _navItem(IconData icon, String label, bool isActive) {
-  //     return Column(
-  //       mainAxisSize: MainAxisSize.min,
-  //       children: [
-  //         Icon(icon, color: isActive ? AppColor.accentYellow : AppColor.textGrey),
-  //         const SizedBox(height: 4),
-  //         AppText(
-  //           txt: label,
-  //           color: isActive ? AppColor.accentYellow : AppColor.textGrey,
-  //           fontSize: AppFontSize.f10,
-  //         ),
-  //       ],
-  //     );
   //   }
+}
+
+class _MultiTpRow extends StatefulWidget {
+  final TradingController controller;
+  final int index;
+  const _MultiTpRow({required this.controller, required this.index});
+
+  @override
+  State<_MultiTpRow> createState() => _MultiTpRowState();
+}
+
+class _MultiTpRowState extends State<_MultiTpRow> {
+  late TextEditingController _textController;
+
+  @override
+  void initState() {
+    super.initState();
+    final level = widget.controller.multiTpLevels[widget.index];
+    _textController = TextEditingController(
+      text: "${level.percentage.toInt()}",
+    );
+  }
+
+  @override
+  void didUpdateWidget(_MultiTpRow oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final level = widget.controller.multiTpLevels[widget.index];
+    if (int.tryParse(_textController.text) != level.percentage.toInt()) {
+      _textController.text = "${level.percentage.toInt()}";
+    }
+  }
+
+  @override
+  void dispose() {
+    _textController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final level = widget.controller.multiTpLevels[widget.index];
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              SizedBox(
+                width: 40,
+                child: AppText(
+                  txt: "Price",
+                  color: AppColor.white,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+              const Spacer(),
+              Container(
+                height: ch(40),
+                width: cw(120),
+                decoration: BoxDecoration(
+                  color: const Color(0xff121212),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                alignment: Alignment.center,
+                child: TextField(
+                  textAlign: TextAlign.end,
+                  style: TextStyle(
+                    color: AppColor.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400,
+                  ),
+                  keyboardType: TextInputType.number,
+                  controller: TextEditingController(
+                    text: level.price.toString(),
+                  ),
+                  decoration: InputDecoration(
+                    contentPadding: EdgeInsets.only(right: cw(10)),
+                    fillColor: AppColor.transparent,
+                    border: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                    errorBorder: InputBorder.none,
+                    disabledBorder: InputBorder.none,
+                    hintText: "0.89943",
+                    hintStyle: TextStyle(
+                      color: AppColor.textGrey,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              SizedBox(
+                width: 40,
+                child: AppText(
+                  txt: "TP${widget.index + 1}",
+                  color: AppColor.textGrey,
+                  fontSize: 12,
+                ),
+              ),
+              Expanded(
+                child: SizedBox(
+                  height: 20,
+                  child: SliderTheme(
+                    data: SliderTheme.of(context).copyWith(
+                      activeTrackColor: AppColor.white,
+                      inactiveTrackColor: AppColor.inactiveGrey.withOpacity(
+                        0.3,
+                      ),
+                      thumbColor: AppColor.white,
+                      thumbShape: const RoundSliderThumbShape(
+                        enabledThumbRadius: 8,
+                      ),
+                      overlayShape: SliderComponentShape.noOverlay,
+                      trackHeight: 3,
+                      tickMarkShape: const RoundSliderTickMarkShape(
+                        tickMarkRadius: 3,
+                      ),
+                      activeTickMarkColor: AppColor.inactiveGrey,
+                      inactiveTickMarkColor: AppColor.inactiveGrey,
+                    ),
+                    child: Slider(
+                      value: level.percentage,
+                      min: 0,
+                      max: 100,
+                      divisions: 100,
+                      onChanged: (val) => widget.controller
+                          .updateMultiTpPercentage(widget.index, val),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Container(
+                width: cw(60),
+                padding: EdgeInsets.symmetric(
+                  vertical: ch(5),
+                  horizontal: cw(10),
+                ),
+                decoration: BoxDecoration(
+                  color: const Color(0xff121212),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                alignment: Alignment.center,
+                child: SizedBox(
+                  height: ch(20),
+                  child: TextField(
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(3),
+                      TextInputFormatter.withFunction((oldValue, newValue) {
+                        if (newValue.text.isEmpty) {
+                          return newValue;
+                        }
+                        final int? value = int.tryParse(newValue.text);
+                        if (value != null && value > 100) {
+                          return oldValue;
+                        }
+                        return newValue;
+                      }),
+                    ],
+                    textAlign: TextAlign.center,
+                    controller: _textController,
+                    onChanged: (val) {
+                      if (val.isNotEmpty) {
+                        final valInt = int.tryParse(val);
+                        if (valInt != null) {
+                          widget.controller.updateMultiTpPercentage(
+                            widget.index,
+                            valInt.toDouble(),
+                          );
+                        }
+                      }
+                    },
+                    style: TextStyle(
+                      color: AppColor.white,
+                      fontSize: AppFontSize.f12,
+                    ),
+                    decoration: InputDecoration(
+                      suffix: AppText(
+                        txt: "%",
+                        color: AppColor.white,
+                        fontSize: AppFontSize.f12,
+                      ),
+                      fillColor: AppColor.transparent,
+                      border: InputBorder.none,
+                      isDense: true,
+                      contentPadding: EdgeInsets.zero,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 class CandleData {

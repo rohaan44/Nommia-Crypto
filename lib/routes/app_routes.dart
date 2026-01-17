@@ -3,6 +3,8 @@ import 'package:nommia_crypto/features/auth/forget_password/forget_password.dart
 import 'package:nommia_crypto/features/auth/sign_in/sign_in.dart';
 import 'package:nommia_crypto/features/auth/sign_up/sign_up.dart';
 import 'package:nommia_crypto/features/dashboard/dashboard_screen.dart';
+import 'package:nommia_crypto/features/dashboard/sub_screen/account_screen/bank_transfer/bank_transfer_view.dart';
+import 'package:nommia_crypto/features/dashboard/sub_screen/account_screen/credit_transfer/credit_transfer_view.dart';
 import 'package:nommia_crypto/features/dashboard/sub_screen/market_screen/market_screen.dart';
 import 'package:nommia_crypto/features/splash_screen/splash_screen.dart';
 import 'package:nommia_crypto/routes/route_paths.dart';
@@ -62,6 +64,25 @@ class AppRouter {
         return PageRouteBuilder(
           pageBuilder: (context, animation, secondaryAnimation) {
             return MarketScreen();
+          },
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return child;
+          },
+        );
+
+      case RoutePaths.bankTransfer:
+        return PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) {
+            return const BankTransferView();
+          },
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return child;
+          },
+        );
+      case RoutePaths.cardTransfer:
+        return PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) {
+            return const CreditTransferView();
           },
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             return child;

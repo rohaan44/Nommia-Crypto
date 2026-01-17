@@ -618,7 +618,9 @@ class ProfileScreen extends StatelessWidget {
           icon: Image.asset(AssetUtils.tradeCancelImg, width: 100, height: 50),
           title: AppText(
             textAlign: TextAlign.center,
-            txt: "Confirm Close Trade",
+            txt: controller.selectedTab == "Open"
+                ? "Confirm Close Trade"
+                : "Confirm Cancel Trade",
             color: AppColor.white,
             fontWeight: FontWeight.w400,
             fontSize: AppFontSize.f18,
@@ -650,14 +652,14 @@ class ProfileScreen extends StatelessWidget {
                 Expanded(
                   child: AppButton(
                     onPressed: () {
-                      Navigator.pop(context); // Close Dialog
-                      // Re-open Sheet in Delete Mode
-                      _showTradeDetailSheet(
-                        context,
-                        trade,
-                        controller,
-                        isDeleteMode: true,
-                      );
+                      Navigator.pop(context);
+
+                      // _showTradeDetailSheet(
+                      //   context,
+                      //   trade,
+                      //   controller,
+                      //   isDeleteMode: true,
+                      // );
                     },
                     child: AppText(
                       txt: "Confirm",
